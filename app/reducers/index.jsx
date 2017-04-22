@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux'
+import accounts from './accounts'
 
 const rootReducer = combineReducers({
-  auth: require('./auth').default,
+  accounts
 })
 
 export default rootReducer
