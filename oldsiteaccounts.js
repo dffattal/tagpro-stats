@@ -11,7 +11,7 @@ for (let i = 1; i < 117922; i++) {
         const $ = cheerio.load(data)
         if (+$('.stat')[3].children[0].data > 300) {
           const url = $('h3')[0].children[1].attribs.href
-          return axios.post('http://localhost:1337/api/accounts/', {url})
+          return axios.post('https://tagpro-stats.herokuapp.com/api/accounts/', {url})
         }
       })
       .catch(console.error)
