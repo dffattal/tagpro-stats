@@ -9,7 +9,7 @@ const clearUsernameLines = require('./utils').clearUsernameLines
 
 const weeklyTimelineUpdateRule = new schedule.RecurrenceRule()
 weeklyTimelineUpdateRule.minute = 55
-weeklyTimelineUpdateRule.hour = 15
+weeklyTimelineUpdateRule.hour = 19
 weeklyTimelineUpdateRule.dayOfWeek = 0
 
 const hourlyStatsUpdateRule = new schedule.RecurrenceRule()
@@ -17,7 +17,7 @@ hourlyStatsUpdateRule.minute = 0
 
 const fetchLeaderboardsAccountsRule = new schedule.RecurrenceRule()
 fetchLeaderboardsAccountsRule.minute = 55
-fetchLeaderboardsAccountsRule.hour = 15
+fetchLeaderboardsAccountsRule.hour = 19
 
 
 const weeklyTimelineUpdate = schedule.scheduleJob(weeklyTimelineUpdateRule, function() {
