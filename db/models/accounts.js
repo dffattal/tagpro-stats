@@ -22,6 +22,9 @@ const Account = db => db.define('accounts', {
       notEmpty: true
     }
   },
+  degrees: {
+    type: Sequelize.INTEGER
+  },
   allTime: {
     type: Sequelize.JSON
   },
@@ -39,33 +42,15 @@ const Account = db => db.define('accounts', {
   hooks: {
     afterUpdate: function(account) {
       if (account.previousNames.indexOf(account.name) === -1) {
-        account.previousNames.push(account.name)
+        const newNames = account.previousNames.concat([account.name])
         this.update({
-          previousNames: account.previousNames
+          previousNames: newNames
         }, {
           where: {
             id: account.id
           }
         })
       }
-    },
-    afterCreate: function(account) {
-      axios.get(account.url)
-        .then(response => response.data)
-        .then(data => {
-          const stats = fetchStats(data)
-          this.update({
-            previousNames: [account.name],
-            allTime: stats[0],
-            rolling300: stats[1],
-            flairs: stats[2],
-            name: stats[3]
-          }, {
-            where: {
-              id: account.id
-            }
-          })
-        })
     }
   },
   instanceMethods: {

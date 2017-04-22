@@ -16,11 +16,11 @@ const hourlyStatsUpdateRule = new schedule.RecurrenceRule()
 hourlyStatsUpdateRule.minute = 0
 
 const fetchLeaderboardsAccountsRule = new schedule.RecurrenceRule()
-fetchLeaderboardsAccountsRule.minute = 18
-// fetchLeaderboardsAccountsRule.hour = 15
+fetchLeaderboardsAccountsRule.minute = 55
+fetchLeaderboardsAccountsRule.hour = 15
 
 
-const weeklyTimelineUpdate = schedule.scheduleJob(weeklyTimelineUpdateRule, function () {
+const weeklyTimelineUpdate = schedule.scheduleJob(weeklyTimelineUpdateRule, function() {
   Account.findAll()
     .then(allAccounts => allAccounts.map(account => account.update({
       timeline: account.timeline.concat(account.getWeeklyStats())
@@ -28,13 +28,13 @@ const weeklyTimelineUpdate = schedule.scheduleJob(weeklyTimelineUpdateRule, func
     .catch(console.error)
 })
 
-const hourlyStatsUpdate = schedule.scheduleJob(hourlyStatsUpdateRule, function () {
+const hourlyStatsUpdate = schedule.scheduleJob(hourlyStatsUpdateRule, function() {
   Account.findAll()
     .then(allAccounts => allAccounts.map(account => {
       axios.get(account.url)
         .then(response => response.data)
         .then(data => {
-          let newStats = fetchStats(data)
+          const newStats = fetchStats(data)
           account.update({
             allTime: newStats[0],
             rolling300: newStats[1],
@@ -45,49 +45,53 @@ const hourlyStatsUpdate = schedule.scheduleJob(hourlyStatsUpdateRule, function (
     }))
 })
 
-const fetchLeaderboardsAccounts = schedule.scheduleJob(fetchLeaderboardsAccountsRule, function () {
+const fetchLeaderboardsAccounts = schedule.scheduleJob(fetchLeaderboardsAccountsRule, function() {
   axios.get('http://tagpro-radius.koalabeast.com/boards')
     .then(response => response.data)
     .then(data => {
-      let $ = cheerio.load(data)
+      const $ = cheerio.load(data)
       fetchLeaderboards($)
     })
 })
 
-function fetchStats (data) {
-  let $ = cheerio.load(data)
-  return [fetchAllTime($), fetchRolling300($), fetchFlairs($), fetchName($)]
+function fetchStats(data) {
+  const $ = cheerio.load(data)
+  return [fetchAllTime($), fetchRolling300($), fetchFlairs($), fetchName($), fetchDegrees($)]
 }
 
-function fetchAllTime ($) {
+function fetchAllTime($) {
   let dataArr = []
-  $('#all-stats').find('td').each(function (index, elem) {
+  $('#all-stats').find('td').each(function(index, elem) {
     dataArr.push(elem.firstChild.data)
   })
   dataArr = transformData(dataArr, 'all')
   return dataArr
 }
 
-function fetchRolling300 ($) {
+function fetchRolling300($) {
   let dataArr = []
-  $('#rolling').find('td').each(function (index, elem) {
+  $('#rolling').find('td').each(function(index, elem) {
     dataArr.push(elem.firstChild.data)
   })
   dataArr = transformData(dataArr, 'rolling')
   return dataArr
 }
 
-function fetchName ($) {
+function fetchName($) {
   return clearWhiteSpace($('.profile-name').text())
 }
 
-function fetchFlairs ($) {
-  let dataArr = []
-  $('#owned-flair').find('.flair-header').each(function (index, elem) {
-    let flairName = clearFlairWhiteSpace(elem.firstChild.data)
+function fetchDegrees($) {
+  return clearWhiteSpace($('.profile-detail').find('td')[5].children[0].data.slice(0, -1))
+}
+
+function fetchFlairs($) {
+  const dataArr = []
+  $('#owned-flair').find('.flair-header').each(function(index, elem) {
+    const flairName = clearFlairWhiteSpace(elem.firstChild.data)
     if (flairName !== 'Remove Flair') dataArr.push({flairName})
   })
-  $('#owned-flair').find('.flair-footer').each(function (index, elem) {
+  $('#owned-flair').find('.flair-footer').each(function(index, elem) {
     let flairCount = clearWhiteSpace(elem.firstChild.next.firstChild.data)
     flairCount = +flairCount.split(':')[1] || 0
     if (index !== dataArr.length) dataArr[index].flairCount = flairCount
@@ -95,9 +99,9 @@ function fetchFlairs ($) {
   return dataArr
 }
 
-function fetchLeaderboards ($) {
-  let accountArr = []
-  $('#daily').find('a').each(function (index, elem) {
+function fetchLeaderboards($) {
+  const accountArr = []
+  $('#daily').find('a').each(function(index, elem) {
     accountArr.push({
       name: clearUsernameLines(elem.lastChild.data),
       url: `http://tagpro-radius.koalabeast.com${elem.attribs.href}`
@@ -113,4 +117,4 @@ function fetchLeaderboards ($) {
   }))
 }
 
-module.exports = 5
+module.exports = fetchStats
