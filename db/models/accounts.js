@@ -2,13 +2,12 @@ const Sequelize = require('sequelize')
 const cheerio = require('cheerio')
 const axios = require('axios')
 const fetchStats = require('APP/server/schedule')
-console.log('in /models/index.js', require('../server/schedule'))
 
 const db = new Sequelize('postgres://localhost:5432/tagpro-stats', {
   logging: false
 })
 
-const Account = db.define('account', {
+const Account = db => db.define('accounts', {
   name: {
     type: Sequelize.STRING
   },
@@ -83,4 +82,4 @@ const Account = db.define('account', {
   }
 })
 
-module.exports = {db, Account}
+module.exports = Account

@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const Account = require('../../models').Account
+const Account = require('APP/db').Accounts
 
 router.get('/', function(req, res, next) {
   Account.findAll()
