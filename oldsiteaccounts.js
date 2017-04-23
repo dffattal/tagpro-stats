@@ -2,7 +2,7 @@ const axios = require('axios')
 const cheerio = require('cheerio')
 const fetchStats = require('./server/schedule')
 
-for (let i = 1; i < 117922; i++) {
+for (let i = 270; i < 117922; i++) {
   setTimeout(function() {
     console.log('Currently seeding account #', i)
     console.log('Attempting to get tagpro-stats profile page...')
