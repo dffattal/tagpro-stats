@@ -17,5 +17,5 @@ for (let i = 1; i < 117922; i++) {
         }
       })
       .catch(console.error)
-  }, i * 1000)
+  }, i * 500)
 }
