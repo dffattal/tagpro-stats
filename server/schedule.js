@@ -3,9 +3,8 @@ const axios = require('axios')
 const cheerio = require('cheerio')
 const Account = require('APP/db').Accounts
 const transformData = require('./utils').transformData
-const clearWhiteSpace = require('./utils').clearWhiteSpace
-const clearFlairWhiteSpace = require('./utils').clearFlairWhiteSpace
-const clearUsernameLines = require('./utils').clearUsernameLines
+const clearAllWhiteSpace = require('./utils').clearAllWhiteSpace
+const clearOuterWhiteSpace = require('./utils').clearOuterWhiteSpace
 
 const weeklyTimelineUpdateRule = new schedule.RecurrenceRule()
 weeklyTimelineUpdateRule.minute = 55
@@ -78,21 +77,21 @@ function fetchRolling300($) {
 }
 
 function fetchName($) {
-  return clearUsernameLines($('.profile-name').text())
+  return clearOuterWhiteSpace($('.profile-name').text())
 }
 
 function fetchDegrees($) {
-  return clearWhiteSpace($('.profile-detail').find('td')[5].children[0].data.slice(0, -1))
+  return clearAllWhiteSpace($('.profile-detail').find('td')[5].children[0].data.slice(0, -1))
 }
 
 function fetchFlairs($) {
   const dataArr = []
   $('#owned-flair').find('.flair-header').each(function(index, elem) {
-    const flairName = clearFlairWhiteSpace(elem.firstChild.data)
+    const flairName = clearOuterWhiteSpace(elem.firstChild.data)
     if (flairName !== 'Remove Flair') dataArr.push({flairName})
   })
   $('#owned-flair').find('.flair-footer').each(function(index, elem) {
-    let flairCount = clearWhiteSpace(elem.firstChild.next.firstChild.data)
+    let flairCount = clearAllWhiteSpace(elem.firstChild.next.firstChild.data)
     flairCount = +flairCount.split(':')[1] || 0
     if (index !== dataArr.length) dataArr[index].flairCount = flairCount
   })
@@ -103,7 +102,7 @@ function fetchLeaderboards($) {
   const accountArr = []
   $('#daily').find('a').each(function(index, elem) {
     accountArr.push({
-      name: clearUsernameLines(elem.lastChild.data),
+      name: clearOuterWhiteSpace(elem.lastChild.data),
       url: `http://tagpro-radius.koalabeast.com${elem.attribs.href}`
     })
   })
