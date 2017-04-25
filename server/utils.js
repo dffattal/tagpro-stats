@@ -4,9 +4,9 @@ const clearWhiteSpace = elem => elem.replace(/[^a-zA-Z0-9%:–]/g, '')
 const clearUsernameLines = name => name.replace(/[\n]/g, '')
 
 const clearFlairWhiteSpace = elem => {
-  let elemText = elem.match(/[a-zA-Z0-9()!?.]/g)
-  let startIndex = elem.indexOf(elemText[0])
-  let endIndex = elem.lastIndexOf(elemText[elemText.length - 1])
+  const elemText = elem.match(/[a-zA-Z0-9()!?.]/g)
+  const startIndex = elem.indexOf(elemText[0])
+  const endIndex = elem.lastIndexOf(elemText[elemText.length - 1])
   return elem.slice(startIndex, endIndex + 1)
 }
 
@@ -19,7 +19,7 @@ const hyphensToZero = elem => {
 // convert hh:mm:ss time to seconds to allow for easier search sorting
 const convertTime = elem => {
   if (elem.indexOf(':') !== -1) {
-    let timeArr = elem.split(':')
+    const timeArr = elem.split(':')
     return +timeArr[0] * 3600 + +timeArr[1] * 60 + +timeArr[2]
   } else {
     return elem
@@ -60,12 +60,11 @@ const dataArrToObj = (dataArr, period) => {
     if (/[a-zA-Z]/.test(dataArr[i][0])) {
       this.currentStat = dataArr[i]
       statLabelIndex = 0
-    }
-    else {
+    } else {
       dataObj[`${statLabel[statLabelIndex]} ${this.currentStat}`] =
-      dataArr[i].indexOf('%') !== -1 ?
-      +dataArr[i].split('%')[0] / 100 :
-      +dataArr[i]
+      dataArr[i].indexOf('%') !== -1
+      ? +dataArr[i].split('%')[0] / 100
+      : +dataArr[i]
       statLabelIndex++
     }
   }
@@ -73,7 +72,7 @@ const dataArrToObj = (dataArr, period) => {
 }
 
 const transformData = (dataArr, period) => {
-    dataArr = dataArr.map(elem => {
+  dataArr = dataArr.map(elem => {
     elem = clearWhiteSpace(elem)
     elem = hyphensToZero(elem)
     elem = convertTime(elem)

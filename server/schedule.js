@@ -78,7 +78,7 @@ function fetchRolling300($) {
 }
 
 function fetchName($) {
-  return clearWhiteSpace($('.profile-name').text())
+  return clearUsernameLines($('.profile-name').text())
 }
 
 function fetchDegrees($) {
