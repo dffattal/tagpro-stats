@@ -2,7 +2,7 @@
 const clearAllWhiteSpace = elem => elem.replace(/\s/g, '')
 
 const clearOuterWhiteSpace = elem => {
-  const elemText = elem.match(/^\s/g)
+  const elemText = elem.match(/\S/g)
   const startIndex = elem.indexOf(elemText[0])
   const endIndex = elem.lastIndexOf(elemText[elemText.length - 1])
   return elem.slice(startIndex, endIndex + 1)
