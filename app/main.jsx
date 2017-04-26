@@ -5,23 +5,21 @@ import {render} from 'react-dom'
 import {connect, Provider} from 'react-redux'
 
 import store from './store'
-import NotFound from './components/NotFound'
+import {getSingleAccount} from './reducers/accounts'
 
-const ExampleApp = connect(
-  () => ({})
-)(
-  ({children}) =>
-    <div>
-      <nav>
-      </nav>
-      {children}
-    </div>
-)
+import NotFound from './components/NotFound'
+import AppContainer from './components/AppContainer'
+import SingleAccount from './components/SingleAccount'
+
+function fetchAccount(routerState) {
+  store.dispatch(getSingleAccount(routerState.params.id))
+}
 
 render(
   <Provider store={store}>
     <Router history={browserHistory}>
-      <Route path="/" component={ExampleApp}>
+      <Route path="/" component={AppContainer}>
+        <Route path="/accounts/:id" component={SingleAccount} onEnter={fetchAccount} />
       </Route>
       <Route path='*' component={NotFound} />
     </Router>
