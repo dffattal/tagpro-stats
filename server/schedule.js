@@ -42,7 +42,8 @@ const hourlyStatsUpdate = schedule.scheduleJob(hourlyStatsUpdateRule, function()
               allTime: newStats[0],
               rolling300: newStats[1],
               flairs: newStats[2],
-              name: newStats[3]
+              name: newStats[3],
+              degrees: newStats[4]
             })
           })
         }, 3600000 / allAccounts.length * i)
