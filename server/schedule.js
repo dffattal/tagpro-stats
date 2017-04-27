@@ -20,6 +20,7 @@ fetchLeaderboardsAccountsRule.hour = 19
 
 
 const weeklyTimelineUpdate = schedule.scheduleJob(weeklyTimelineUpdateRule, function() {
+  console.log('Updating all player timelines!')
   Account.findAll()
     .then(allAccounts => allAccounts.map(account => account.update({
       timeline: account.timeline.concat(account.getWeeklyStats())
@@ -28,6 +29,7 @@ const weeklyTimelineUpdate = schedule.scheduleJob(weeklyTimelineUpdateRule, func
 })
 
 const hourlyStatsUpdate = schedule.scheduleJob(hourlyStatsUpdateRule, function() {
+  console.log('Updating all player stats!')
   Account.findAll()
     .then(allAccounts => allAccounts.map(account => {
       axios.get(account.url)
@@ -45,6 +47,7 @@ const hourlyStatsUpdate = schedule.scheduleJob(hourlyStatsUpdateRule, function()
 })
 
 const fetchLeaderboardsAccounts = schedule.scheduleJob(fetchLeaderboardsAccountsRule, function() {
+  console.log('Fetching new accounts from Leaderboards pages!')
   axios.get('http://tagpro-radius.koalabeast.com/boards')
     .then(response => response.data)
     .then(data => {
