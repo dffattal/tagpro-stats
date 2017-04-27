@@ -31,19 +31,23 @@ const weeklyTimelineUpdate = schedule.scheduleJob(weeklyTimelineUpdateRule, func
 const hourlyStatsUpdate = schedule.scheduleJob(hourlyStatsUpdateRule, function() {
   console.log('Updating all player stats!')
   Account.findAll()
-    .then(allAccounts => allAccounts.map(account => {
-      axios.get(account.url)
-        .then(response => response.data)
-        .then(data => {
-          const newStats = fetchStats(data)
-          account.update({
-            allTime: newStats[0],
-            rolling300: newStats[1],
-            flairs: newStats[2],
-            name: newStats[3]
+    .then(allAccounts => {
+      for (let i = 0; i < allAccounts.length; i++) {
+        setTimeout(function() {
+          axios.get(allAccounts[i].url)
+          .then(response => response.data)
+          .then(data => {
+            const newStats = fetchStats(data)
+            allAccounts[i].update({
+              allTime: newStats[0],
+              rolling300: newStats[1],
+              flairs: newStats[2],
+              name: newStats[3]
+            })
           })
-        })
-    }))
+        }, 3600000 / allAccounts.length * i)
+      }
+    })
 })
 
 const fetchLeaderboardsAccounts = schedule.scheduleJob(fetchLeaderboardsAccountsRule, function() {
