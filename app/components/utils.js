@@ -20,13 +20,16 @@ export const convertTime = value => {
   return `${hh}:${mm}:${ss}`
 }
 
-export const convertPercents = value => `${value * 100}%`
+export const convertPercents = (value, statName) => {
+  if (statName === 'Win Percent') return `${(value * 100).toFixed(4)}%`
+  else return `${(value * 100).toFixed(0)}%`
+}
 
 export const calcWinPercent = (data, statNames) => {
   statNames.forEach(stat => {
     if (stat.indexOf('Win Percent') !== -1) {
       const timePeriod = stat.split(' ')[0]
-      data[stat] = data[`${timePeriod} Wins`] /
+      data[stat] = (data[`${timePeriod} Wins`] /
       (
         data[`${timePeriod} Games`] -
         (
@@ -35,7 +38,7 @@ export const calcWinPercent = (data, statNames) => {
         ) * (
         1 - data[`${timePeriod} Save Percent`]
         )
-      )
+      ))
     }
   })
 }
