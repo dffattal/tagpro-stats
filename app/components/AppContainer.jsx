@@ -20,7 +20,9 @@ function App({children}) {
             </ul>
           </div>
         </nav>
-        {children}
+        <div className="col-lg-12">
+          {children}
+        </div>
     </div>
   )
 }

@@ -71,7 +71,7 @@ const dataArrToObj = (dataArr, period) => {
 
 const transformData = (dataArr, period) => {
   dataArr = dataArr.map(elem => {
-    elem = clearAllWhiteSpace(elem)
+    elem = clearOuterWhiteSpace(elem)
     elem = hyphensToZero(elem)
     elem = convertTime(elem)
     elem = convertStatTitles(elem)

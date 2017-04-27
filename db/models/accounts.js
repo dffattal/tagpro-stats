@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize')
 const cheerio = require('cheerio')
 const axios = require('axios')
-const fetchStats = require('APP/server/schedule')
 
 const db = new Sequelize('postgres://localhost:5432/tagpro-stats', {
   logging: false
