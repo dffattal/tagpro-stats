@@ -1,6 +1,7 @@
 const Account = require('APP/db').Accounts
 const treesToBuild = require('./utils').treesToBuild
 const jsonfile = require('jsonfile')
+const path = require('path')
 
 function statBST(val, name, id) {
   return {
@@ -42,13 +43,24 @@ function traverse(head, iterator) {
   if (head.right) traverse(head.right, iterator)
 }
 
-function rank(head, rank) {
-  if (head.left) rank(head.left, rank)
+function ranker(head, rank) {
+  if (head.left) ranker(head.left, rank)
   head.rank = rank
-  if (head.right) rank(head.right, rank + 1)
+  if (head.right) ranker(head.right, rank + 1)
 }
 
-const treeTitles = ['Daily', 'Weekly', 'Monthly', 'All', 'All', 'CTF', 'Neutral']
+const treeTitles = [
+  {title: 'Daily', category: 'allTime'},
+  {title: 'Weekly', category: 'allTime'},
+  {title: 'Monthly', category: 'allTime'},
+  {title: 'All', category: 'allTime'},
+  {title: 'All', category: 'rolling300'},
+  {title: 'CTF', category: 'rolling300'},
+  {title: 'Neutral', category: 'rolling300'}]
+
+function formTreeBase(title) {
+
+}
 
 function buildTrees() {
   Account.findAll()
@@ -71,36 +83,42 @@ function buildTrees() {
           const headName = allAccounts[0].name
           const headId = allAccounts[0].id
           const head = statBST(headValue, headName, headId)
-          if (!accountData[0]) accountData[0] = {name: headName, id: headId}
-          accountData[0][timeline][`${title} ${tree.name}`] = headValue
-          let totalAccounts = 1
-          while (totalAccounts < allAccounts.length) {
+          if (!accountData[allAccounts[0].id]) accountData[allAccounts[0].id] = {name: headName, id: headId}
+          if (!accountData[allAccounts[0].id][timeline]) accountData[allAccounts[0].id][timeline] = {}
+          accountData[allAccounts[0].id][timeline][`${title} ${tree.name}`] = headValue
+          let currentAccount = 1
+          while (currentAccount < allAccounts.length) {
             let value
             if (tree.method) {
               value = tree.method(
-                allAccounts[totalAccounts][timeline][`${title} ${tree.firstArg}`],
-                allAccounts[totalAccounts][timeline][`${title} ${tree.secondArg}`],
-                allAccounts[totalAccounts][timeline][`${title} ${tree.thirdArg}`],
-                allAccounts[totalAccounts][timeline][`${title} ${tree.fourthArg}`]
+                allAccounts[currentAccount][timeline][`${title} ${tree.firstArg}`],
+                allAccounts[currentAccount][timeline][`${title} ${tree.secondArg}`],
+                allAccounts[currentAccount][timeline][`${title} ${tree.thirdArg}`],
+                allAccounts[currentAccount][timeline][`${title} ${tree.fourthArg}`]
               )
             } else {
-              value = allAccounts[totalAccounts][timeline][`${title} ${tree.name}`]
+              value = allAccounts[currentAccount][timeline][`${title} ${tree.name}`]
             }
-            const {name, id} = allAccounts[totalAccounts]
+            const {name, id} = allAccounts[currentAccount]
             insert(head, value, name, id)
-            if (!accountData[totalAccounts]) accountData[totalAccounts] = {name, id}
-            accountData[totalAccounts][timeline][`${title} ${tree.name}`] = value
-            totalAccounts++
+            if (!accountData[allAccounts[currentAccount].id]) accountData[allAccounts[currentAccount].id] = {name, id}
+            if (!accountData[allAccounts[currentAccount].id][timeline]) accountData[allAccounts[currentAccount].id][timeline] = {}
+            accountData[allAccounts[currentAccount].id][timeline][`${title} ${tree.name}`] = value
+            currentAccount++
           }
-          rank(head, 1)
+          ranker(head, 1)
           traverse(head, function(node) {
-            accountData[node.id - 1][timeline][`${title} ${tree.name}`] = node.rank
+            accountData[node.id][timeline][`${title} ${tree.name}`] = node.rank
           })
-          jsonfile.writeFile(`/public/data/${timeline}/${title}/${tree.name}.json`, head)
+          jsonfile.writeFile(path.resolve(__dirname, `../../public/data/${timeline}/${title}/${tree.name}.json`), head, function(err) {
+            console.error(err)
+          })
         })
       })
       accountData.forEach(account => {
-        jsonfile.writeFile(`/public/data/accounts/${account.id}.json`, account)
+        jsonfile.writeFile(path.resolve(__dirname, `../../public/data/accounts/${account.id}.json`), account, function(err) {
+          console.error(err)
+        })
       })
     })
 }
