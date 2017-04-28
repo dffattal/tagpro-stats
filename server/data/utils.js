@@ -1,8 +1,8 @@
-const simpleRatio = (numStat, denStat) => numStat / denStat
+const simpleRatio = (numStat, denStat) => numStat / denStat || 0
 
-const winRatio = (wins, games, saves, savePct) => wins / (games - (saves / savePct * (1 - savePct)))
+const winRatio = (wins, games, saves, savePct) => wins / (games - (saves / savePct * (1 - savePct))) || 0
 
-const timeRatio = (numStat, denTime) => numStat / denTime * 3600
+const timeRatio = (numStat, denTime) => numStat / denTime * 3600 || 0
 
 const nonReturnTags = (tags, returns) => tags - returns
 
@@ -57,22 +57,22 @@ const treesToBuild = [
     args: ['Tags', 'Time Played']
   },
   {
-    name: 'Pops'
+    name: 'Popped'
   },
   {
-    name: 'Pops Per Game',
+    name: 'Popped Per Game',
     method: simpleRatio,
-    args: ['Pops', 'Games']
+    args: ['Popped', 'Games']
   },
   {
-    name: 'Pops Per Hour',
+    name: 'Popped Per Hour',
     method: timeRatio,
-    args: ['Pops', 'Time Played']
+    args: ['Popped', 'Time Played']
   },
   {
     name: 'Tags Per Pop',
     method: simpleRatio,
-    args: ['Tags', 'Pops']
+    args: ['Tags', 'Popped']
   },
   {
     name: 'Grabs'
@@ -80,7 +80,7 @@ const treesToBuild = [
   {
     name: 'Grabs Per Game',
     method: simpleRatio,
-    args: ['Grabs', 'Pops']
+    args: ['Grabs', 'Popped']
   },
   {
     name: 'Grabs Per Hour',

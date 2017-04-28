@@ -1,7 +1,9 @@
 const router = require('express').Router()
-const Account = require('APP/db').Accounts
 const axios = require('axios')
 const cheerio = require('cheerio')
+const jsonfile = require('jsonfile')
+const path = require('path')
+const Account = require('APP/db').Accounts
 const fetchStats = require('./schedule')
 
 router.get('/', function(req, res, next) {
@@ -38,12 +40,13 @@ router.post('/', function(req, res, next) {
 })
 
 router.get('/:id', function(req, res, next) {
-  Account.findById(req.params.id)
-    .then(foundAccount => {
-      if (foundAccount) return res.status(200).json(foundAccount)
-      else return res.sendStatus(404)
-    })
-    .catch(next)
+  // Account.findById(req.params.id)
+  //   .then(foundAccount => {
+  //     if (foundAccount) return res.status(200).json(foundAccount)
+  //     else return res.sendStatus(404)
+  //   })
+  //   .catch(next)
+  res.status(200).json(jsonfile.readFileSync(path.resolve(__dirname, `../public/data/accounts/${req.params.id}.json`)))
 })
 
 router.put('/:id', function(req, res, next) {
