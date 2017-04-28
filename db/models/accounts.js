@@ -22,16 +22,20 @@ const Account = db => db.define('accounts', {
     }
   },
   degrees: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+    allowNull: false
   },
   allTime: {
-    type: Sequelize.JSON
+    type: Sequelize.JSON,
+    allowNull: false
   },
   rolling300: {
-    type: Sequelize.JSON
+    type: Sequelize.JSON,
+    allowNull: false
   },
   flairs: {
-    type: Sequelize.ARRAY(Sequelize.JSON)
+    type: Sequelize.ARRAY(Sequelize.JSON),
+    allowNull: false
   },
   timeline: {
     type: Sequelize.ARRAY(Sequelize.JSON),
