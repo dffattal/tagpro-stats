@@ -10,10 +10,7 @@ const treesToBuild = [
   {
     name: 'Win Percent',
     method: winRatio,
-    firstArg: 'Wins',
-    secondArg: 'Games',
-    thirdArg: 'Saves',
-    fourthArg: 'Save Percent'
+    args: ['Wins', 'Games', 'Saves', 'Save Percent']
   },
   {
     name: 'Points'
@@ -21,8 +18,7 @@ const treesToBuild = [
   {
     name: 'Points Per Game',
     method: simpleRatio,
-    firstArg: 'Points',
-    secondArg: 'Games'
+    args: ['Points', 'Games']
   },
   {
     name: 'Games'
@@ -30,8 +26,7 @@ const treesToBuild = [
   {
     name: 'Games Per Hour',
     method: timeRatio,
-    firstArg: 'Games',
-    secondArg: 'Time Played'
+    args: ['Games', 'Time Played']
   },
   {
     name: 'Wins'
@@ -54,14 +49,12 @@ const treesToBuild = [
   {
     name: 'Tags Per Game',
     method: simpleRatio,
-    firstArg: 'Tags',
-    secondArg: 'Games'
+    args: ['Tags', 'Games']
   },
   {
     name: 'Tags Per Hour',
     method: timeRatio,
-    firstArg: 'Tags',
-    secondArg: 'Time Played'
+    args: ['Tags', 'Time Played']
   },
   {
     name: 'Pops'
@@ -69,20 +62,17 @@ const treesToBuild = [
   {
     name: 'Pops Per Game',
     method: simpleRatio,
-    firstArg: 'Pops',
-    secondArg: 'Games'
+    args: ['Pops', 'Games']
   },
   {
     name: 'Pops Per Hour',
     method: timeRatio,
-    firstArg: 'Pops',
-    secondArg: 'Time Played'
+    args: ['Pops', 'Time Played']
   },
   {
     name: 'Tags Per Pop',
     method: simpleRatio,
-    firstArg: 'Tags',
-    secondArg: 'Pops'
+    args: ['Tags', 'Pops']
   },
   {
     name: 'Grabs'
@@ -90,14 +80,12 @@ const treesToBuild = [
   {
     name: 'Grabs Per Game',
     method: simpleRatio,
-    firstArg: 'Grabs',
-    secondArg: 'Pops'
+    args: ['Grabs', 'Pops']
   },
   {
     name: 'Grabs Per Hour',
     method: timeRatio,
-    firstArg: 'Grabs',
-    secondArg: 'Time Played'
+    args: ['Grabs', 'Time Played']
   },
   {
     name: 'Captures'
@@ -105,20 +93,17 @@ const treesToBuild = [
   {
     name: 'Captures Per Game',
     method: simpleRatio,
-    firstArg: 'Captures',
-    secondArg: 'Games'
+    args: ['Captures', 'Games']
   },
   {
     name: 'Captures Per Hour',
     method: timeRatio,
-    firstArg: 'Captures',
-    secondArg: 'Time Played'
+    args: ['Captures', 'Time Played']
   },
   {
     name: 'Captures Per Grab',
     method: simpleRatio,
-    firstArg: 'Captures',
-    secondArg: 'Grabs'
+    args: ['Captures', 'Grabs']
   },
   {
     name: 'Hold'
@@ -126,26 +111,22 @@ const treesToBuild = [
   {
     name: 'Hold Per Game',
     method: simpleRatio,
-    firstArg: 'Hold',
-    secondArg: 'Games'
+    args: ['Hold', 'Games']
   },
   {
     name: 'Hold Per Grab',
     method: simpleRatio,
-    firstArg: 'Hold',
-    secondArg: 'Grabs'
+    args: ['Hold', 'Grabs']
   },
   {
     name: 'Hold Per Hour',
     method: timeRatio,
-    firstArg: 'Hold',
-    secondArg: 'Time Played'
+    args: ['Hold', 'Time Played']
   },
   {
     name: 'Hold Per Cap',
     method: simpleRatio,
-    firstArg: 'Hold',
-    secondArg: 'Captures'
+    args: ['Hold', 'Captures']
   },
   {
     name: 'Prevent'
@@ -153,14 +134,12 @@ const treesToBuild = [
   {
     name: 'Prevent Per Game',
     method: simpleRatio,
-    firstArg: 'Prevent',
-    secondArg: 'Games'
+    args: ['Prevent', 'Games']
   },
   {
     name: 'Prevent Per Hour',
     method: timeRatio,
-    firstArg: 'Prevent',
-    secondArg: 'Time Played'
+    args: ['Prevent', 'Time Played']
   },
   {
     name: 'Returns'
@@ -168,14 +147,12 @@ const treesToBuild = [
   {
     name: 'Returns Per Game',
     method: simpleRatio,
-    firstArg: 'Returns',
-    secondArg: 'Games'
+    args: ['Returns', 'Games']
   },
   {
     name: 'Returns Per Hour',
     method: timeRatio,
-    firstArg: 'Returns',
-    secondArg: 'Time Played'
+    args: ['Returns', 'Time Played']
   },
   {
     name: 'Support'
@@ -183,26 +160,22 @@ const treesToBuild = [
   {
     name: 'Support Per Game',
     method: simpleRatio,
-    firstArg: 'Support',
-    secondArg: 'Games'
+    args: ['Support', 'Games']
   },
   {
     name: 'Support Per Hour',
     method: timeRatio,
-    firstArg: 'Support',
-    secondArg: 'Time Played'
+    args: ['Support', 'Time Played']
   },
   {
     name: 'Non-Return Tags',
     method: nonReturnTags,
-    firstArg: 'Tags',
-    secondArg: 'Returns'
+    args: ['Tags', 'Returns']
   },
   {
     name: 'Prevent Per Return',
     method: simpleRatio,
-    firstArg: 'Prevent',
-    secondArg: 'Returns'
+    args: ['Prevent', 'Returns']
   },
   {
     name: 'Power-up Percent'
@@ -216,8 +189,7 @@ const treesToBuild = [
   {
     name: 'Disconnects Per Game',
     method: simpleRatio,
-    firstArg: 'Disconnects',
-    secondArg: 'Games'
+    args: ['Disconnects', 'Games']
   }
 ]
 

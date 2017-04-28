@@ -43,74 +43,74 @@ function traverse(head, iterator) {
   if (head.right) traverse(head.right, iterator)
 }
 
-function ranker(head, rank) {
-  if (head.left) ranker(head.left, rank)
-  head.rank = rank
-  if (head.right) ranker(head.right, rank + 1)
+const treeTitles = [
+  {title: 'Daily', folder: 'allTime', category: 'All Time'},
+  {title: 'Weekly', folder: 'allTime', category: 'All Time'},
+  {title: 'Monthly', folder: 'allTime', category: 'All Time'},
+  {title: 'All', folder: 'allTime', category: 'All Time'},
+  {title: 'All', folder: 'rolling300', category: 'Rolling 300'},
+  {title: 'CTF', folder: 'rolling300', category: 'Rolling 300'},
+  {title: 'Neutral', folder: 'rolling300', category: 'Rolling 300'}]
+
+const getStatValue = (account, tree, folderName, timePeriod) => {
+  let value
+  if (tree.method) {
+    const args = tree.args.map(arg => account[folderName][`${timePeriod} ${tree.name}`]) // pull data from account model if tree requires special method
+    value = tree.method(...args)
+  } else {
+    value = account[folderName][`${timePeriod} ${tree.name}`] // else pull data direct from account model
+  }
+  return value
 }
 
-const treeTitles = [
-  {title: 'Daily', category: 'allTime'},
-  {title: 'Weekly', category: 'allTime'},
-  {title: 'Monthly', category: 'allTime'},
-  {title: 'All', category: 'allTime'},
-  {title: 'All', category: 'rolling300'},
-  {title: 'CTF', category: 'rolling300'},
-  {title: 'Neutral', category: 'rolling300'}]
-
-function formTreeBase(title) {
-
+const findOrCreateAccountDataObj = (accountData, id, name, timePeriod) => {
+  if (!accountData[id]) {
+    accountData[id] = {name, id} // initialize accountData obj if doesnt exist
+  }
+  if (!accountData[id][timePeriod]) {
+    accountData[id][timePeriod] = {} // initialize timePeriod obj if doesnt exist
+  }
+  return accountData[id]
 }
 
 function buildTrees() {
   Account.findAll()
-    .then(allAccounts => {
-      const accountData = []
+    .then(allAccounts => { // fetch all accounts from db
+      const accountData = [] // initialize individual player stat json structures
+
       treeTitles.forEach((title, i) => {
-        let timeline
-        if (i < 4) timeline = 'allTime'
-        else timeline = 'rolling300'
+        const folderName = title.folder // initialize folder name and model obj ('allTime' or 'rolling300')
+        const timePeriod = title.category // initialize timePeriod ('All Time' or 'Rolling 300' )
+
         treesToBuild.forEach(tree => {
-          let headValue
-          if (tree.method) {
-            headValue = tree.method(
-              allAccounts[0][timeline][`${title} ${tree.firstArg}`],
-              allAccounts[0][timeline][`${title} ${tree.secondArg}`],
-              allAccounts[0][timeline][`${title} ${tree.thirdArg}`],
-              allAccounts[0][timeline][`${title} ${tree.fourthArg}`]
-            )
-          }
+          const statName = `${title} ${tree.name}`
+
+          const headValue = getStatValue(allAccounts[0], tree, folderName, timePeriod)
           const headName = allAccounts[0].name
           const headId = allAccounts[0].id
           const head = statBST(headValue, headName, headId)
-          if (!accountData[allAccounts[0].id]) accountData[allAccounts[0].id] = {name: headName, id: headId}
-          if (!accountData[allAccounts[0].id][timeline]) accountData[allAccounts[0].id][timeline] = {}
-          accountData[allAccounts[0].id][timeline][`${title} ${tree.name}`] = headValue
-          let currentAccount = 1
-          while (currentAccount < allAccounts.length) {
-            let value
-            if (tree.method) {
-              value = tree.method(
-                allAccounts[currentAccount][timeline][`${title} ${tree.firstArg}`],
-                allAccounts[currentAccount][timeline][`${title} ${tree.secondArg}`],
-                allAccounts[currentAccount][timeline][`${title} ${tree.thirdArg}`],
-                allAccounts[currentAccount][timeline][`${title} ${tree.fourthArg}`]
-              )
-            } else {
-              value = allAccounts[currentAccount][timeline][`${title} ${tree.name}`]
-            }
-            const {name, id} = allAccounts[currentAccount]
-            insert(head, value, name, id)
-            if (!accountData[allAccounts[currentAccount].id]) accountData[allAccounts[currentAccount].id] = {name, id}
-            if (!accountData[allAccounts[currentAccount].id][timeline]) accountData[allAccounts[currentAccount].id][timeline] = {}
-            accountData[allAccounts[currentAccount].id][timeline][`${title} ${tree.name}`] = value
-            currentAccount++
+
+          const headAccountData = findOrCreateAccountDataObj(accountData, headId, headName, timePeriod)
+          headAccountData[timePeriod][statName] = headValue
+
+          let currentIndex = 1
+          let currentAccountData
+          while (currentIndex < allAccounts.length) {
+            const currentAccount = allAccounts[currentIndex]
+            const currentValue = getStatValue(currentAccount, tree, folderName, timePeriod)
+            const {currentName, currentId} = currentAccount
+            insert(head, currentValue, currentName, currentId)
+
+            currentAccountData = findOrCreateAccountDataObj(accountData, currentId, currentName, timePeriod)
+            currentAccountData[timePeriod][statName] = currentValue
+            currentIndex++
           }
-          ranker(head, 1)
+          let rank = 1
           traverse(head, function(node) {
-            accountData[node.id][timeline][`${title} ${tree.name}`] = node.rank
+            node.rank = rank++
+            currentAccountData[timePeriod][statName].rank = node.rank
           })
-          jsonfile.writeFile(path.resolve(__dirname, `../../public/data/${timeline}/${title}/${tree.name}.json`), head, function(err) {
+          jsonfile.writeFile(path.resolve(__dirname, `../../public/data/${folderName}/${title}/${tree.name}.json`), head, function(err) {
             console.error(err)
           })
         })
