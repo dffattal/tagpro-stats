@@ -101,19 +101,21 @@ function buildTrees() {
             accountData[currentId][timePeriod][titleName][tree.name] = {value: currentValue}
             currentIndex++
           }
+
           let rank = 1
           head.traverse(function(node) {
             node.rank = rank++
             accountData[node.id][timePeriod][titleName][tree.name].rank = node.rank
           })
+
           jsonfile.writeFile(path.resolve(__dirname, `../../public/data/${folderName}/${titleName}/${tree.name}.json`), head, function(err) {
-            console.error(err)
+            if (err) console.error(err)
           })
         })
       })
       accountData.forEach(account => {
         jsonfile.writeFile(path.resolve(__dirname, `../../public/data/accounts/${account.id}.json`), account, function(err) {
-          console.error(err)
+          if (err) console.error(err)
         })
       })
     })
