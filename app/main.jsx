@@ -5,7 +5,7 @@ import {render} from 'react-dom'
 import {connect, Provider} from 'react-redux'
 
 import store from './store'
-import {getSingleAccount, getSingleAccountData} from './reducers/accounts'
+import {getSingleAccount} from './reducers/accounts'
 
 import NotFound from './components/NotFound'
 import AppContainer from './components/AppContainer'
@@ -14,7 +14,6 @@ import SearchResults from './components/SearchResults'
 
 function fetchAccount(routerState) {
   store.dispatch(getSingleAccount(routerState.params.id))
-  store.dispatch(getSingleAccountData(routerState.params.id))
 }
 
 render(

@@ -59,10 +59,6 @@ router.get('/:id', function(req, res, next) {
     .catch(next)
 })
 
-router.get('/:id/data', function(req, res, next) {
-  res.status(200).json(jsonfile.readFileSync(path.resolve(__dirname, `../public/data/accounts/${req.params.id}.json`)))
-})
-
 router.put('/:id', function(req, res, next) {
   Account.findById(req.params.id)
     .then(foundAccount => foundAccount.update(req.body))

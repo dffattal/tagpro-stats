@@ -134,8 +134,7 @@ class SingleAccount extends Component {
 const SingleAccountContainer = connect(
   function mapStateToProps(state) {
     return {
-      selectedAccount: state.accounts.selectedAccount,
-      selectedAccountData: state.accounts.selectedAccountData
+      selectedAccount: state.accounts.selectedAccount
     }
   }
 )(

@@ -6002,7 +6002,7 @@ module.exports = g;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getSearchResults = exports.getSingleAccountData = exports.getSingleAccount = undefined;
+exports.getSearchResults = exports.getSingleAccount = undefined;
 
 exports.default = function () {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultState;
@@ -6013,9 +6013,6 @@ exports.default = function () {
   switch (action.type) {
     case FETCH_SINGLE_ACCOUNT:
       newState.selectedAccount = action.selectedAccount;
-      break;
-    case FETCH_SINGLE_ACCOUNT_DATA:
-      newState.selectedAccountData = action.selectedAccountData;
       break;
     case FETCH_SEARCH_RESULTS:
       newState.searchResults = action.searchResults;
@@ -6033,24 +6030,16 @@ var _axios2 = _interopRequireDefault(_axios);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var FETCH_SINGLE_ACCOUNT = 'FETCH_SINGLE_ACCOUNT';
-var FETCH_SINGLE_ACCOUNT_DATA = 'FETCH_SINGLE_ACCOUNT_DATA';
 var FETCH_SEARCH_RESULTS = 'FETCH_SEARCH_RESULTS';
 
 var defaultState = {
   selectedAccount: {},
-  selectedAccountData: {},
   searchResults: []
 };
 
 var fetchSingleAccount = function fetchSingleAccount(selectedAccount) {
   return {
     type: FETCH_SINGLE_ACCOUNT, selectedAccount: selectedAccount
-  };
-};
-
-var fetchSingleAccountData = function fetchSingleAccountData(selectedAccountData) {
-  return {
-    type: FETCH_SINGLE_ACCOUNT_DATA, selectedAccountData: selectedAccountData
   };
 };
 
@@ -6066,16 +6055,6 @@ var getSingleAccount = exports.getSingleAccount = function getSingleAccount(acco
       return response.data;
     }).then(function (selectedAccount) {
       dispatch(fetchSingleAccount(selectedAccount));
-    }).catch(console.error);
-  };
-};
-
-var getSingleAccountData = exports.getSingleAccountData = function getSingleAccountData(accountId) {
-  return function (dispatch) {
-    _axios2.default.get('/api/accounts/' + accountId + '/data').then(function (response) {
-      return response.data;
-    }).then(function (selectedAccountData) {
-      dispatch(fetchSingleAccountData(selectedAccountData));
     }).catch(console.error);
   };
 };
@@ -14608,8 +14587,7 @@ var SingleAccount = function (_Component) {
 
 var SingleAccountContainer = (0, _reactRedux.connect)(function mapStateToProps(state) {
   return {
-    selectedAccount: state.accounts.selectedAccount,
-    selectedAccountData: state.accounts.selectedAccountData
+    selectedAccount: state.accounts.selectedAccount
   };
 })(SingleAccount);
 
@@ -15582,7 +15560,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function fetchAccount(routerState) {
   _store2.default.dispatch((0, _accounts.getSingleAccount)(routerState.params.id));
-  _store2.default.dispatch((0, _accounts.getSingleAccountData)(routerState.params.id));
 }
 
 (0, _reactDom.render)(_react2.default.createElement(

@@ -1,12 +1,6 @@
 const Sequelize = require('sequelize')
-const cheerio = require('cheerio')
-const axios = require('axios')
 
-const db = new Sequelize('postgres://localhost:5432/tagpro-stats', {
-  logging: false
-})
-
-const Account = db => db.define('accounts', {
+module.exports = db => db.define('accounts', {
   name: {
     type: Sequelize.STRING
   },
@@ -40,6 +34,9 @@ const Account = db => db.define('accounts', {
   timeline: {
     type: Sequelize.ARRAY(Sequelize.JSON),
     defaultValue: []
+  },
+  data: {
+    type: Sequelize.JSON
   }
 }, {
   hooks: {
@@ -55,19 +52,5 @@ const Account = db => db.define('accounts', {
         })
       }
     }
-  },
-  instanceMethods: {
-    getWeeklyStats: function() {
-      const weeklyDataObj = {}
-      const statNames = Object.keys(this.allTime)
-      for (let i = 0; i < statNames.length; i++) {
-        if (statNames[i].slice(0, 6) === 'Weekly') {
-          weeklyDataObj[statNames[i]] = this.allTime[statNames[i]]
-        }
-      }
-      return weeklyDataObj
-    }
   }
 })
-
-module.exports = Account
