@@ -117,14 +117,14 @@ function buildTrees() {
           })
 
           console.log('Attempting to write full-stat tree...')
-          s3fs.writeFile(`data/${folderName}/${titleName}/${tree.name}.json`, JSON.stringify(head), function(err) {
+          s3fs.writeFile(`/data/${folderName}/${titleName}/${tree.name}.json`, JSON.stringify(head), function(err) {
             if (err) console.error(err)
           })
         })
       })
       accountData.forEach(account => {
         console.log('Attempting to write account tree...')
-        s3fs.writeFile(`data/accounts/${account.id}.json`, JSON.stringify(account), function(err) {
+        s3fs.writeFile(`/data/accounts/${account.id}.json`, JSON.stringify(account), function(err) {
           if (err) console.error(err)
         })
       })
