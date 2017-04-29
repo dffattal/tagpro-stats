@@ -11,6 +11,8 @@ export const percentStats = [
   'Power-up Percent'
 ]
 
+export const convertRatios = value => value.toFixed(4)
+
 export const convertTime = value => {
   const hh = Math.floor(value / 3600) || '00'
   let mm = Math.floor((value - +hh * 3600) / 60) || '00'
@@ -33,12 +35,12 @@ export const calcWinPercent = (data, statNames) => {
       (
         data[`${timePeriod} Games`] -
         (
-          data[`${timePeriod} Saves`] /
-          data[`${timePeriod} Save Percent`]
+          (data[`${timePeriod} Saves`] /
+          data[`${timePeriod} Save Percent`]) || 0
         ) * (
         1 - data[`${timePeriod} Save Percent`]
         )
-      ))
+      ) || 0)
     }
   })
 }

@@ -7,7 +7,18 @@ const Account = require('APP/db').Accounts
 const fetchStats = require('./schedule')
 
 router.get('/', function(req, res, next) {
-  Account.findAll()
+  let options = {}
+  if (req.query && req.query.name) {
+    options = {
+      where: {
+        name: {
+          $iLike: req.query.name
+        }
+      },
+      order: [['name', 'ASC']]
+    }
+  }
+  Account.findAll(options)
     .then(allAccounts => res.json(allAccounts))
     .catch(next)
 })
@@ -40,12 +51,15 @@ router.post('/', function(req, res, next) {
 })
 
 router.get('/:id', function(req, res, next) {
-  // Account.findById(req.params.id)
-  //   .then(foundAccount => {
-  //     if (foundAccount) return res.status(200).json(foundAccount)
-  //     else return res.sendStatus(404)
-  //   })
-  //   .catch(next)
+  Account.findById(req.params.id)
+    .then(foundAccount => {
+      if (foundAccount) return res.status(200).json(foundAccount)
+      else return res.sendStatus(404)
+    })
+    .catch(next)
+})
+
+router.get('/:id/data', function(req, res, next) {
   res.status(200).json(jsonfile.readFileSync(path.resolve(__dirname, `../public/data/accounts/${req.params.id}.json`)))
 })
 

@@ -10,7 +10,7 @@ function StatBST(val, name, id) {
 }
 
 StatBST.prototype.insert = function(val, name, id) {
-  if (val < this.value) {
+  if (val <= this.value) {
     if (this.left) return this.left.insert(val, name, id)
     this.left = new StatBST(val, name, id)
   } else {
@@ -48,7 +48,8 @@ const treeTitles = [
   {name: 'All', folder: 'allTime', category: 'All Time'},
   {name: 'All', folder: 'rolling300', category: 'Rolling 300'},
   {name: 'CTF', folder: 'rolling300', category: 'Rolling 300'},
-  {name: 'Neutral', folder: 'rolling300', category: 'Rolling 300'}]
+  {name: 'Neutral', folder: 'rolling300', category: 'Rolling 300'},
+  {name: 'Flairs', folder: 'flairs', category: 'Flairs'}]
 
 const getStatValue = (account, tree, folderName, titleName, statName) => {
   let value

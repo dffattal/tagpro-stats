@@ -1,34 +1,67 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Link} from 'react-router'
+import {Link, browserHistory} from 'react-router'
+import {getSearchResults} from '../reducers/accounts'
 
-function App({children}) {
-  return (
-    <div>
-      <nav className="navbar navbar-default">
-          <div className="container-fluid">
-            <div className="navbar-header" >
-              <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span className="sr-only">Toggle navigation</span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
-              </button>
+
+class App extends Component {
+  constructor(props) {
+    super(props)
+    this.search = this.search.bind(this)
+    this.addAccount = this.addAccount.bind(this)
+  }
+
+  search(evt) {
+    evt.preventDefault()
+    this.props.getSearchResults(evt.target.search.value)
+    browserHistory.push('/results')
+  }
+
+  addAccount(evt) {
+    evt.preventDefault()
+  }
+
+  render() {
+    return (
+      <div>
+        <nav className="navbar navbar-default">
+            <div className="container-fluid">
+              <ul className="nav navbar-nav">
+                <li><Link className="navbar-brand" to="/">TagPro-Stats</Link></li>
+              </ul>
+              <ul className="nav navbar-nav pull-right">
+                <li>
+                  <form className="navbar-form navbar-right" onSubmit={this.addAccount}>
+                    <div className="form-group">
+                      <input type="text" className="form-control" placeholder="Add an account" name="account" />
+                    </div>
+                    <button className="btn btn-success">Add</button>
+                  </form>
+                  <form className="navbar-form navbar-right" onSubmit={this.search}>
+                    <div className="form-group">
+                      <input type="text" className="form-control" placeholder="Search for a player" name="search" />
+                    </div>
+                    <button className="btn btn-info">Search</button>
+                  </form>
+                </li>
+              </ul>
             </div>
-            <ul className="nav navbar-nav">
-              <li><Link className="navbar-brand" to="/">TagPro-Stats</Link></li>
-            </ul>
+          </nav>
+          <div className="col-lg-12">
+            {this.props.children}
           </div>
-        </nav>
-        <div className="col-lg-12">
-          {children}
-        </div>
-    </div>
-  )
+      </div>
+    )
+  }
 }
 
 const AppContainer = connect(
-  () => ({})
+  () => ({}),
+  dispatch => ({
+    getSearchResults: name => {
+      dispatch(getSearchResults(name))
+    }
+  })
 )(
   (App)
 )

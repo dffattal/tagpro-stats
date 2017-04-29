@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {timeStats, percentStats, convertTime, convertPercents, calcWinPercent} from './utils'
+import {timeStats, percentStats, convertTime, convertPercents, convertRatios, calcWinPercent} from './utils'
 
 class SingleAccount extends Component {
   constructor(props) {
@@ -15,7 +15,8 @@ class SingleAccount extends Component {
 
   cleanStats(stat, value) {
     if (timeStats.indexOf(stat) !== -1) return convertTime(value)
-    if (percentStats.indexOf(stat) !== -1) return (convertPercents(value, stat))
+    if (percentStats.indexOf(stat) !== -1) return convertPercents(value, stat)
+    if (stat.indexOf('Per ') !== -1) return convertRatios(value)
     else return value
   }
 
@@ -33,22 +34,20 @@ class SingleAccount extends Component {
     const {allTime, degrees, flairs, name, previousNames, rolling300} = this.props.selectedAccount
     const allTimeStats = allTime && Object.keys(allTime)
     const rolling300Stats = rolling300 && Object.keys(rolling300)
+    const data = this.props.selectedAccountData
 
     allTime && calcWinPercent(allTime, allTimeStats)
     rolling300 && calcWinPercent(rolling300, rolling300Stats)
 
     const tables = [{
       name: 'All Time',
-      stats: allTimeStats,
-      data: allTime,
-      tabs: ['Daily', 'Weekly', 'Monthly', 'All']
+      tabs: ['Daily', 'Weekly', 'Monthly', 'All'],
+      state: this.state.allTimeTab
     }, {
       name: 'Rolling 300',
-      stats: rolling300Stats,
-      data: rolling300,
-      tabs: ['All', 'CTF', 'Neutral']
+      tabs: ['All', 'CTF', 'Neutral'],
+      state: this.state.rolling300Tab
     }]
-    console.log(this.state)
     return (
       <div>
         <div className="row">
@@ -72,23 +71,18 @@ class SingleAccount extends Component {
                     <thead>
                       <tr className="active">
                         <th>{table.name}</th>
-                        <th>Value</th>
-                        <th>Rank</th>
+                        <th className="text-right">Value</th>
+                        <th className="text-right">Rank</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {table.stats && table.stats.filter(stat => {
-                        let currentTable
-                        i === 0 ? currentTable = this.state.allTimeTab : currentTable = this.state.rolling300Tab
-                        return stat.split(' ')[0] === currentTable
-                      })
-                      .map(stat => {
-                        const statTitle = stat.split(' ').slice(1).join(' ')
+                      {data[table.name] && Object.keys(data[table.name][table.state]).map(stat => {
+                        const statObj = data[table.name][table.state][stat]
                         return (
                           <tr key={stat}>
-                            <th>{statTitle}</th>
-                            <td>{this.cleanStats(statTitle, table.data[stat])}</td>
-                            <td>TBD</td>
+                            <th>{stat}</th>
+                            <td className="text-right">{this.cleanStats(stat, statObj.value)}</td>
+                            <td className="text-right">{statObj.rank}</td>
                           </tr>
                         )
                       })}
@@ -140,7 +134,8 @@ class SingleAccount extends Component {
 const SingleAccountContainer = connect(
   function mapStateToProps(state) {
     return {
-      selectedAccount: state.accounts.selectedAccount
+      selectedAccount: state.accounts.selectedAccount,
+      selectedAccountData: state.accounts.selectedAccountData
     }
   }
 )(
