@@ -1,7 +1,14 @@
 const Account = require('APP/db').Accounts
 const treesToBuild = require('./utils').treesToBuild
-const jsonfile = require('jsonfile')
 const path = require('path')
+const S3FS = require('s3fs')
+const s3fs = new S3FS(
+  'tagpro-stats',
+  {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  }
+)
 
 function StatBST(val, name, id) {
   this.value = val
@@ -109,13 +116,13 @@ function buildTrees() {
             accountData[node.id][timePeriod][titleName][tree.name].rank = node.rank
           })
 
-          jsonfile.writeFile(path.resolve(process.cwd(), `../../public/data/${folderName}/${titleName}/${tree.name}.json`), head, function(err) {
+          s3fs.writeFile(`/data/${folderName}/${titleName}/${tree.name}.json`, head, function(err) {
             if (err) console.error(err)
           })
         })
       })
       accountData.forEach(account => {
-        jsonfile.writeFile(path.resolve(process.cwd(), `../../public/data/accounts/${account.id}.json`), account, function(err) {
+        s3fs.writeFile(`../../public/data/accounts/${account.id}.json`, account, function(err) {
           if (err) console.error(err)
         })
       })

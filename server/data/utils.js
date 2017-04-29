@@ -1,6 +1,6 @@
 const simpleRatio = (numStat, denStat) => numStat / denStat || 0
 
-const winRatio = (wins, games, saves, savePct) => wins / (games - (saves / savePct * (1 - savePct))) || 0
+const winRatio = (wins, games, saves, savePct) => wins / (games - ((saves / savePct * (1 - savePct)) || 0)) || 0
 
 const timeRatio = (numStat, denTime) => numStat / denTime * 3600 || 0
 
