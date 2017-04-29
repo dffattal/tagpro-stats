@@ -109,13 +109,13 @@ function buildTrees() {
             accountData[node.id][timePeriod][titleName][tree.name].rank = node.rank
           })
 
-          jsonfile.writeFile(path.resolve(__dirname, `../../public/data/${folderName}/${titleName}/${tree.name}.json`), head, function(err) {
+          jsonfile.writeFile(`../../public/data/${folderName}/${titleName}/${tree.name}.json`, head, function(err) {
             if (err) console.error(err)
           })
         })
       })
       accountData.forEach(account => {
-        jsonfile.writeFile(path.resolve(__dirname, `../../public/data/accounts/${account.id}.json`), account, function(err) {
+        jsonfile.writeFile(`../../public/data/accounts/${account.id}.json`, account, function(err) {
           if (err) console.error(err)
         })
       })
