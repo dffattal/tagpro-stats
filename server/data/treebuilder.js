@@ -116,17 +116,20 @@ function buildTrees() {
             accountData[node.id][timePeriod][titleName][tree.name].rank = node.rank
           })
 
-          s3fs.writeFile(`/data/${folderName}/${titleName}/${tree.name}.json`, head, function(err) {
+          console.log('Attempting to write full-stat tree...')
+          s3fs.writeFile(`data/${folderName}/${titleName}/${tree.name}.json`, head, function(err) {
             if (err) console.error(err)
           })
         })
       })
       accountData.forEach(account => {
-        s3fs.writeFile(`../../public/data/accounts/${account.id}.json`, account, function(err) {
+        console.log('Attempting to write account tree...')
+        s3fs.writeFile(`data/accounts/${account.id}.json`, account, function(err) {
           if (err) console.error(err)
         })
       })
     })
+  console.log('Exiting function!')
 }
 
 buildTrees()
