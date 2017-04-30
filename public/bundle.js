@@ -14054,6 +14054,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+/* global toastr */
+toastr.options.closeButton = true;
+
 var App = function (_Component) {
   _inherits(App, _Component);
 
@@ -14080,10 +14083,10 @@ var App = function (_Component) {
       evt.preventDefault();
       console.log(evt.target.account.value);
       var urlCheck = evt.target.account.value.split('.');
-      if (urlCheck[1].toLowerCase() === 'koalabeast' && urlCheck[2].toLowerCase().startsWith('com')) {
-        console.log('Clean url!');
+      if (urlCheck.length < 3 || urlCheck[1].toLowerCase() !== 'koalabeast' || !urlCheck[2].toLowerCase().startsWith('com')) {
+        toastr.warning('Please provide a valid TagPro account profile URL.<br /><br /> Example:<br />http://tagpro-radius.koalabeast.com/profile/52e582ca49164d6a2100044e');
       } else {
-        console.log('Bad url!');
+        toastr.info('Success?');
       }
     }
   }, {

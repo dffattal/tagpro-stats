@@ -5,10 +5,10 @@ const Account = require('APP/db').Accounts
 const transformData = require('./utils').transformData
 const clearOuterWhiteSpace = require('./utils').clearOuterWhiteSpace
 
-const weeklyTimelineUpdateRule = new schedule.RecurrenceRule()
-weeklyTimelineUpdateRule.minute = 55
-weeklyTimelineUpdateRule.hour = 19
-weeklyTimelineUpdateRule.dayOfWeek = 0
+// const weeklyTimelineUpdateRule = new schedule.RecurrenceRule()
+// weeklyTimelineUpdateRule.minute = 55
+// weeklyTimelineUpdateRule.hour = 19
+// weeklyTimelineUpdateRule.dayOfWeek = 0
 
 const hourlyStatsUpdateRule = new schedule.RecurrenceRule()
 hourlyStatsUpdateRule.minute = 0
@@ -18,14 +18,14 @@ fetchLeaderboardsAccountsRule.minute = 55
 fetchLeaderboardsAccountsRule.hour = 19
 
 
-const weeklyTimelineUpdate = schedule.scheduleJob(weeklyTimelineUpdateRule, function() {
-  console.log('Updating all player timelines!')
-  Account.findAll()
-    .then(allAccounts => allAccounts.map(account => account.update({
-      timeline: account.timeline.concat(account.getWeeklyStats())
-    })))
-    .catch(console.error)
-})
+// const weeklyTimelineUpdate = schedule.scheduleJob(weeklyTimelineUpdateRule, function() {
+//   console.log('Updating all player timelines!')
+//   Account.findAll()
+//     .then(allAccounts => allAccounts.map(account => account.update({
+//       timeline: account.timeline.concat(account.getWeeklyStats())
+//     })))
+//     .catch(console.error)
+// })
 
 const hourlyStatsUpdate = schedule.scheduleJob(hourlyStatsUpdateRule, function() {
   console.log('Updating all player stats!')

@@ -70,7 +70,8 @@
     "sequelize": "^3.24.6",
     "sequelize-cli": "^2.7.0",
     "sinon": "^1.17.6",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "toastr": "^2.1.2"
   },
   "devDependencies": {
     "babel": "^6.5.2",

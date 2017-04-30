@@ -3,6 +3,8 @@ import {connect} from 'react-redux'
 import {Link, browserHistory} from 'react-router'
 import {getSearchResults} from '../reducers/accounts'
 
+/* global toastr */
+toastr.options.closeButton = true
 
 class App extends Component {
   constructor(props) {
@@ -21,10 +23,10 @@ class App extends Component {
     evt.preventDefault()
     console.log(evt.target.account.value)
     const urlCheck = evt.target.account.value.split('.')
-    if (urlCheck[1].toLowerCase() === 'koalabeast' && urlCheck[2].toLowerCase().startsWith('com')) {
-      console.log('Clean url!')
+    if (urlCheck.length < 3 || urlCheck[1].toLowerCase() !== 'koalabeast' || !urlCheck[2].toLowerCase().startsWith('com')) {
+      toastr.warning('Please provide a valid TagPro account profile URL.<br /><br /> Example:<br />http://tagpro-radius.koalabeast.com/profile/52e582ca49164d6a2100044e')
     } else {
-      console.log('Bad url!')
+      toastr.info('Success?')
     }
   }
 
