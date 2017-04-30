@@ -7023,3 +7023,8 @@ a.list-group-item-danger.active:focus {
 .logo {
   font-size: 100px
 }
+.nav-label {
+  color: #ffffff;
+  font-weight: normal;
+  margin-right: 5px;
+}

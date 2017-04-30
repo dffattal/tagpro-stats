@@ -81,7 +81,7 @@ function buildTrees() {
           const fullStatName = `${titleName} ${statName}`
 
           allAccounts.forEach(account => {
-            const value = getStatValue(account, tree, folderName, titleName, fullStatName)
+            const value = getStatValue(account, treesToBuild[tree], folderName, titleName, fullStatName)
             const {name, id} = account
             if (!accountData[id]) {
               accountData[id] = {name, id}

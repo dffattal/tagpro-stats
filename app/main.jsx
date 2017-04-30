@@ -10,7 +10,7 @@ import {getSingleAccount} from './reducers/accounts'
 import NotFound from './components/NotFound'
 import AppContainer from './components/AppContainer'
 import SingleAccount from './components/SingleAccount'
-import SearchResults from './components/SearchResults'
+import AccountSearch from './components/AccountSearch'
 
 function fetchAccount(routerState) {
   store.dispatch(getSingleAccount(routerState.params.id))
@@ -21,7 +21,7 @@ render(
     <Router history={browserHistory}>
       <Route path="/" component={AppContainer}>
         <Route path="/accounts/:id" component={SingleAccount} onEnter={fetchAccount} />
-        <Route path="/results" component={SearchResults} />
+        <Route path="/results" component={AccountSearch} />
       </Route>
       <Route path='*' component={NotFound} />
     </Router>

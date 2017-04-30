@@ -3,6 +3,8 @@ import {connect} from 'react-redux'
 import {Link, browserHistory} from 'react-router'
 import axios from 'axios'
 import {getSearchResults} from '../reducers/accounts'
+import {getSingleTree} from '../reducers/data'
+import {flairTreesToBuild, treesToBuild} from 'APP/server/data/utils'
 
 /* global toastr */
 toastr.options.closeButton = true
@@ -10,14 +12,27 @@ toastr.options.closeButton = true
 class App extends Component {
   constructor(props) {
     super(props)
-    this.search = this.search.bind(this)
+    this.state={
+      category: 'All Time',
+      stat: 'Win Percent',
+      flair: 'TagPro Developer'
+    }
+    this.searchAccounts = this.searchAccounts.bind(this)
     this.addAccount = this.addAccount.bind(this)
+    this.changeCategory = this.changeCategory.bind(this)
+    this.changeStat = this.changeStat.bind(this)
+    this.searchStats = this.searchStats.bind(this)
   }
 
-  search(evt) {
+  searchAccounts(evt) {
     evt.preventDefault()
     this.props.getSearchResults(evt.target.search.value)
     browserHistory.push('/results')
+  }
+
+  searchStats(evt) {
+    evt.preventDefault()
+    this.props.getSingleTree(this.state)
   }
 
   addAccount(evt) {
@@ -43,13 +58,51 @@ class App extends Component {
     }
   }
 
+  changeCategory(evt) {
+    this.setState({
+      category: evt.target.value
+    })
+  }
+
+  changeStat(evt) {
+    if (this.state.category === 'Flairs') {
+      this.setState({
+        flair: evt.target.value
+      })
+    } else {
+      this.setState({
+        stat: evt.target.value
+      })
+    }
+  }
+
   render() {
+    console.log(this.state)
+    const stats = (this.state.category === 'Flairs' ? flairTreesToBuild : Object.keys(treesToBuild))
     return (
       <div>
         <nav className="navbar navbar-default">
             <div className="container-fluid">
               <ul className="nav navbar-nav">
                 <li><Link className="navbar-brand" to="/">TagPro-Stats</Link></li>
+                <li>
+                  <form className="navbar-form navbar-left" onSubmit={this.searchStats}>
+                    <label className="nav-label">Search:</label>
+                    <select className="form-control" value={this.state.category} onChange={this.changeCategory}>
+                      <option value="All Time">All Time</option>
+                      <option value="Rolling 300">Rolling 300</option>
+                      <option value="Flairs">Flairs</option>
+                    </select>
+                    <select className="form-control" value={this.state.stat} onChange={this.changeStat}>
+                      {stats.map(stat => {
+                        return (
+                          <option value={stat} key={stat}>{stat}</option>
+                        )
+                      })}
+                    </select>
+                    <button className="btn btn-info">Submit</button>
+                  </form>
+                </li>
               </ul>
               <ul className="nav navbar-nav pull-right">
                 <li>
@@ -59,7 +112,7 @@ class App extends Component {
                     </div>
                     <button className="btn btn-success">Add</button>
                   </form>
-                  <form className="navbar-form navbar-right" onSubmit={this.search}>
+                  <form className="navbar-form navbar-right" onSubmit={this.searchAccounts}>
                     <div className="form-group">
                       <input type="text" className="form-control" placeholder="Search for a player" name="search" />
                     </div>
@@ -82,6 +135,9 @@ const AppContainer = connect(
   dispatch => ({
     getSearchResults: name => {
       dispatch(getSearchResults(name))
+    },
+    getSingleTree: searchQuery => {
+      dispatch(getSingleTree(searchQuery))
     }
   })
 )(

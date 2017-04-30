@@ -14050,6 +14050,10 @@ var _axios2 = _interopRequireDefault(_axios);
 
 var _accounts = __webpack_require__(50);
 
+var _data = __webpack_require__(325);
+
+var _utils = __webpack_require__(324);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -14069,17 +14073,31 @@ var App = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-    _this.search = _this.search.bind(_this);
+    _this.state = {
+      category: 'All Time',
+      stat: 'Win Percent',
+      flair: 'TagPro Developer'
+    };
+    _this.searchAccounts = _this.searchAccounts.bind(_this);
     _this.addAccount = _this.addAccount.bind(_this);
+    _this.changeCategory = _this.changeCategory.bind(_this);
+    _this.changeStat = _this.changeStat.bind(_this);
+    _this.searchStats = _this.searchStats.bind(_this);
     return _this;
   }
 
   _createClass(App, [{
-    key: 'search',
-    value: function search(evt) {
+    key: 'searchAccounts',
+    value: function searchAccounts(evt) {
       evt.preventDefault();
       this.props.getSearchResults(evt.target.search.value);
       _reactRouter.browserHistory.push('/results');
+    }
+  }, {
+    key: 'searchStats',
+    value: function searchStats(evt) {
+      evt.preventDefault();
+      this.props.getSingleTree(this.state);
     }
   }, {
     key: 'addAccount',
@@ -14104,8 +14122,30 @@ var App = function (_Component) {
       }
     }
   }, {
+    key: 'changeCategory',
+    value: function changeCategory(evt) {
+      this.setState({
+        category: evt.target.value
+      });
+    }
+  }, {
+    key: 'changeStat',
+    value: function changeStat(evt) {
+      if (this.state.category === 'Flairs') {
+        this.setState({
+          flair: evt.target.value
+        });
+      } else {
+        this.setState({
+          stat: evt.target.value
+        });
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
+      console.log(this.state);
+      var stats = this.state.category === 'Flairs' ? _utils.flairTreesToBuild : Object.keys(_utils.treesToBuild);
       return _react2.default.createElement(
         'div',
         null,
@@ -14125,6 +14165,54 @@ var App = function (_Component) {
                   _reactRouter.Link,
                   { className: 'navbar-brand', to: '/' },
                   'TagPro-Stats'
+                )
+              ),
+              _react2.default.createElement(
+                'li',
+                null,
+                _react2.default.createElement(
+                  'form',
+                  { className: 'navbar-form navbar-left', onSubmit: this.searchStats },
+                  _react2.default.createElement(
+                    'label',
+                    { className: 'nav-label' },
+                    'Search:'
+                  ),
+                  _react2.default.createElement(
+                    'select',
+                    { className: 'form-control', value: this.state.category, onChange: this.changeCategory },
+                    _react2.default.createElement(
+                      'option',
+                      { value: 'All Time' },
+                      'All Time'
+                    ),
+                    _react2.default.createElement(
+                      'option',
+                      { value: 'Rolling 300' },
+                      'Rolling 300'
+                    ),
+                    _react2.default.createElement(
+                      'option',
+                      { value: 'Flairs' },
+                      'Flairs'
+                    )
+                  ),
+                  _react2.default.createElement(
+                    'select',
+                    { className: 'form-control', value: this.state.stat, onChange: this.changeStat },
+                    stats.map(function (stat) {
+                      return _react2.default.createElement(
+                        'option',
+                        { value: stat, key: stat },
+                        stat
+                      );
+                    })
+                  ),
+                  _react2.default.createElement(
+                    'button',
+                    { className: 'btn btn-info' },
+                    'Submit'
+                  )
                 )
               )
             ),
@@ -14150,7 +14238,7 @@ var App = function (_Component) {
                 ),
                 _react2.default.createElement(
                   'form',
-                  { className: 'navbar-form navbar-right', onSubmit: this.search },
+                  { className: 'navbar-form navbar-right', onSubmit: this.searchAccounts },
                   _react2.default.createElement(
                     'div',
                     { className: 'form-group' },
@@ -14188,6 +14276,9 @@ var AppContainer = (0, _reactRedux.connect)(function () {
   return {
     getSearchResults: function getSearchResults(name) {
       dispatch((0, _accounts.getSearchResults)(name));
+    },
+    getSingleTree: function getSingleTree(searchQuery) {
+      dispatch((0, _data.getSingleTree)(searchQuery));
     }
   };
 })(App);
@@ -14262,85 +14353,7 @@ var NotFound = function NotFound(props) {
 exports.default = NotFound;
 
 /***/ }),
-/* 137 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(7);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactRedux = __webpack_require__(37);
-
-var _reactRouter = __webpack_require__(38);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var SearchResults = function (_Component) {
-  _inherits(SearchResults, _Component);
-
-  function SearchResults(props) {
-    _classCallCheck(this, SearchResults);
-
-    return _possibleConstructorReturn(this, (SearchResults.__proto__ || Object.getPrototypeOf(SearchResults)).call(this, props));
-  }
-
-  _createClass(SearchResults, [{
-    key: 'render',
-    value: function render() {
-      return _react2.default.createElement(
-        'div',
-        { className: 'col-lg-6 col-lg-offset-1 pull-left' },
-        _react2.default.createElement(
-          'h3',
-          null,
-          'Search Results'
-        ),
-        _react2.default.createElement(
-          'ul',
-          { className: 'list-group' },
-          this.props.searchResults.map(function (account) {
-            return _react2.default.createElement(
-              'li',
-              { key: account.id, className: 'list-group-item' },
-              _react2.default.createElement(
-                _reactRouter.Link,
-                { to: '/accounts/' + account.id },
-                account.name
-              )
-            );
-          })
-        )
-      );
-    }
-  }]);
-
-  return SearchResults;
-}(_react.Component);
-
-var SearchResultsContainer = (0, _reactRedux.connect)(function (state) {
-  return {
-    searchResults: state.accounts.searchResults
-  };
-})(SearchResults);
-
-exports.default = SearchResultsContainer;
-
-/***/ }),
+/* 137 */,
 /* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -15572,9 +15585,9 @@ var _SingleAccount = __webpack_require__(138);
 
 var _SingleAccount2 = _interopRequireDefault(_SingleAccount);
 
-var _SearchResults = __webpack_require__(137);
+var _AccountSearch = __webpack_require__(323);
 
-var _SearchResults2 = _interopRequireDefault(_SearchResults);
+var _AccountSearch2 = _interopRequireDefault(_AccountSearch);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15592,7 +15605,7 @@ function fetchAccount(routerState) {
       _reactRouter.Route,
       { path: '/', component: _AppContainer2.default },
       _react2.default.createElement(_reactRouter.Route, { path: '/accounts/:id', component: _SingleAccount2.default, onEnter: fetchAccount }),
-      _react2.default.createElement(_reactRouter.Route, { path: '/results', component: _SearchResults2.default })
+      _react2.default.createElement(_reactRouter.Route, { path: '/results', component: _AccountSearch2.default })
     ),
     _react2.default.createElement(_reactRouter.Route, { path: '*', component: _NotFound2.default })
   )
@@ -32875,6 +32888,382 @@ module.exports = function(module) {
 	return module;
 };
 
+
+/***/ }),
+/* 321 */,
+/* 322 */,
+/* 323 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(7);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__(37);
+
+var _reactRouter = __webpack_require__(38);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var AccountSearch = function (_Component) {
+  _inherits(AccountSearch, _Component);
+
+  function AccountSearch(props) {
+    _classCallCheck(this, AccountSearch);
+
+    var _this = _possibleConstructorReturn(this, (AccountSearch.__proto__ || Object.getPrototypeOf(AccountSearch)).call(this, props));
+
+    _this.state = {
+      lowerBound: 0,
+      upperBound: 100
+    };
+    _this.decreaseBounds = _this.decreaseBounds.bind(_this);
+    _this.increaseBounds = _this.increaseBounds.bind(_this);
+    return _this;
+  }
+
+  _createClass(AccountSearch, [{
+    key: 'decreaseBounds',
+    value: function decreaseBounds() {
+      this.setState({
+        lowerBound: this.state.lowerBound -= 100,
+        upperBound: this.state.upperBound -= 100
+      });
+    }
+  }, {
+    key: 'increaseBounds',
+    value: function increaseBounds() {
+      this.setState({
+        lowerBound: this.state.lowerBound += 100,
+        upperBound: this.state.upperBound += 100
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
+      var results = this.props.searchResults;
+      return _react2.default.createElement(
+        'div',
+        { className: 'col-lg-6 col-lg-offset-1 pull-left' },
+        _react2.default.createElement(
+          'h3',
+          null,
+          results.length,
+          ' Account',
+          results.length === 1 ? '' : 's',
+          ' Found'
+        ),
+        _react2.default.createElement(
+          'ul',
+          { className: 'list-group' },
+          this.props.searchResults.map(function (account, i) {
+            if (i >= _this2.state.lowerBound && i < _this2.state.upperBound) {
+              return _react2.default.createElement(
+                'li',
+                { key: account.id, className: 'list-group-item' },
+                _react2.default.createElement(
+                  _reactRouter.Link,
+                  { to: '/accounts/' + account.id },
+                  account.name
+                )
+              );
+            }
+          })
+        ),
+        _react2.default.createElement(
+          'btn',
+          {
+            className: 'btn btn-info pull-left ' + (this.state.lowerBound === 0 ? 'disabled' : ''),
+            onClick: this.decreaseBounds },
+          'Prev'
+        ),
+        _react2.default.createElement(
+          'btn',
+          {
+            className: 'btn btn-info pull-right ' + (this.state.upperBound >= results.length ? 'disabled' : ''),
+            onClick: this.increaseBounds },
+          'Next'
+        )
+      );
+    }
+  }]);
+
+  return AccountSearch;
+}(_react.Component);
+
+var AccountSearchContainer = (0, _reactRedux.connect)(function (state) {
+  return {
+    searchResults: state.accounts.searchResults
+  };
+})(AccountSearch);
+
+exports.default = AccountSearchContainer;
+
+/***/ }),
+/* 324 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var simpleRatio = function simpleRatio(numStat, denStat) {
+  return numStat / denStat || 0;
+};
+
+var winRatio = function winRatio(wins, games, saves, savePct) {
+  return wins / (games - (saves / savePct * (1 - savePct) || 0)) || 0;
+};
+
+var timeRatio = function timeRatio(numStat, denTime) {
+  return numStat / denTime * 3600 || 0;
+};
+
+var nonReturnTags = function nonReturnTags(tags, returns) {
+  return tags - returns;
+};
+
+var flairTreesToBuild = ['TagPro Developer', 'Community Contributor', 'Moderator', 'Map Tester', 'Level 1 Donor', 'Level 2 Donor', 'Level 3 Donor', 'Level 4 Donor', 'Bitcoin Donor (Any Amount)', 'Community Contest Winner', 'Kongregate', 'Monthly Leader Board Winner', 'Weekly Leader Board Winner', 'Daily Leader Board Winner', 'Insane Win Rate', 'Awesome Win Rate', 'Good Win Rate', 'Happy Birthday TagPro', 'Lucky You', 'How Foolish', 'Hare Today, Goon Tomorrow', 'UnfortunateSniper Hacks TagPro', 'So Very Scary', 'Daryl Would Be Proud', 'Happy 2nd Birthday TagPro', 'Tower 1-1 Complete', 'Good and Lucky', 'Clowning Around Gravity', 'Racing For Eggs', 'Racing For Carrots', 'All balls are created equal!', 'Easy as Pumpkin Pie', 'DOOT DOOT', 'Lighter Than a Duck', 'Happy 3rd Birthday TagPro', 'Tower 1-2 Complete', 'Pup Drunk', 'Participation Egg', 'Valued Member Egg', 'Bounty Hunter Egg', 'Really, Another Pumpkin?', 'MMM... Brains', 'Backstabber', 'Cheap Christmas Candy', 'You Could Catch Me!', 'Ho! Ho! Ho!', 'Happy 4th Birthday TagPro', 'Tower 1-3 Complete', 'WOAH! It\'s real!', 'Pencil', 'Bacon', 'Baseball', 'Moon', 'Penguin', 'Freezing', 'Dolphin', 'Alien', 'Tomato', 'Road Sign', 'Peace', 'Magma', 'Flux Capacitor', 'Microphone', 'Boiling', 'Dalmatians', 'Yellow Lightning', 'ABC', 'Plane', 'Love', 'Pokemon', 'Phi', 'U Turn', 'World', 'Bones', 'Boiling 2', 'Blue Lightning', 'Uranium', 'Boxing', 'Bowling', 'Pi'];
+
+var treesToBuild = {
+  'Win Percent': {
+    method: winRatio,
+    args: ['Wins', 'Games', 'Saves', 'Save Percent']
+  },
+  'Points': {
+    method: false
+  },
+  'Points Per Game': {
+    method: simpleRatio,
+    args: ['Points', 'Games']
+  },
+  'Games': {
+    method: false
+  },
+  'Games Per Hour': {
+    method: timeRatio,
+    args: ['Games', 'Time Played']
+  },
+  'Wins': {
+    method: false
+  },
+  'Ties': {
+    method: false
+  },
+  'Losses': {
+    method: false
+  },
+  'Saves': {
+    method: false
+  },
+  'Save Percent': {
+    method: false
+  },
+  'Tags': {
+    method: false
+  },
+  'Tags Per Game': {
+    method: simpleRatio,
+    args: ['Tags', 'Games']
+  },
+  'Tags Per Hour': {
+    method: timeRatio,
+    args: ['Tags', 'Time Played']
+  },
+  'Popped': {
+    method: false
+  },
+  'Popped Per Game': {
+    method: simpleRatio,
+    args: ['Popped', 'Games']
+  },
+  'Popped Per Hour': {
+    method: timeRatio,
+    args: ['Popped', 'Time Played']
+  },
+  'Tags Per Pop': {
+    method: simpleRatio,
+    args: ['Tags', 'Popped']
+  },
+  'Grabs': {
+    method: false
+  },
+  'Grabs Per Game': {
+    method: simpleRatio,
+    args: ['Grabs', 'Popped']
+  },
+  'Grabs Per Hour': {
+    method: timeRatio,
+    args: ['Grabs', 'Time Played']
+  },
+  'Captures': {
+    method: false
+  },
+  'Captures Per Game': {
+    method: simpleRatio,
+    args: ['Captures', 'Games']
+  },
+  'Captures Per Hour': {
+    method: timeRatio,
+    args: ['Captures', 'Time Played']
+  },
+  'Captures Per Grab': {
+    method: simpleRatio,
+    args: ['Captures', 'Grabs']
+  },
+  'Hold': {
+    method: false
+  },
+  'Hold Per Game': {
+    method: simpleRatio,
+    args: ['Hold', 'Games']
+  },
+  'Hold Per Grab': {
+    method: simpleRatio,
+    args: ['Hold', 'Grabs']
+  },
+  'Hold Per Hour': {
+    method: timeRatio,
+    args: ['Hold', 'Time Played']
+  },
+  'Hold Per Cap': {
+    method: simpleRatio,
+    args: ['Hold', 'Captures']
+  },
+  'Prevent': {
+    method: false
+  },
+  'Prevent Per Game': {
+    method: simpleRatio,
+    args: ['Prevent', 'Games']
+  },
+  'Prevent Per Hour': {
+    method: timeRatio,
+    args: ['Prevent', 'Time Played']
+  },
+  'Returns': {
+    method: false
+  },
+  'Returns Per Game': {
+    method: simpleRatio,
+    args: ['Returns', 'Games']
+  },
+  'Returns Per Hour': {
+    method: timeRatio,
+    args: ['Returns', 'Time Played']
+  },
+  'Support': {
+    method: false
+  },
+  'Support Per Game': {
+    method: simpleRatio,
+    args: ['Support', 'Games']
+  },
+  'Support Per Hour': {
+    method: timeRatio,
+    args: ['Support', 'Time Played']
+  },
+  'Non-Return Tags': {
+    method: nonReturnTags,
+    args: ['Tags', 'Returns']
+  },
+  'Prevent Per Return': {
+    method: simpleRatio,
+    args: ['Prevent', 'Returns']
+  },
+  'Power-up Percent': {
+    method: false
+  },
+  'Time Played': {
+    method: false
+  },
+  'Disconnects': {
+    method: false
+  },
+  'Disconnects Per Game': {
+    method: simpleRatio,
+    args: ['Disconnects', 'Games']
+  }
+};
+
+module.exports = {
+  treesToBuild: treesToBuild,
+  flairTreesToBuild: flairTreesToBuild
+};
+
+/***/ }),
+/* 325 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getSingleTree = undefined;
+
+exports.default = function () {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultState;
+  var action = arguments[1];
+
+  var newState = Object.assign({}, state);
+
+  switch (action.type) {
+    case FETCH_SINGLE_TREE:
+      newState.selectedTree = action.selectedTree;
+      break;
+    default:
+      return state;
+  }
+  return newState;
+};
+
+var _axios = __webpack_require__(141);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var FETCH_SINGLE_TREE = 'FETCH_SINGLE_TREE';
+
+var defaultState = {
+  selectedTree: {}
+};
+
+var fetchSingleTree = function fetchSingleTree(selectedTree) {
+  return {
+    type: FETCH_SINGLE_TREE, selectedTree: selectedTree
+  };
+};
+
+var getSingleTree = exports.getSingleTree = function getSingleTree(searchQuery) {
+  return function (dispatch) {
+    var category = searchQuery.category;
+    var name = category === 'Flairs' ? searchQuery.flair : searchQuery.stat;
+    _axios2.default.get('/api/data?category=' + category + '&name=' + name).then(function (response) {
+      return response.data;
+    }).then(function (selectedTree) {
+      dispatch(fetchSingleTree(selectedTree[0]));
+    }).catch(console.error);
+  };
+};
 
 /***/ })
 /******/ ]);
