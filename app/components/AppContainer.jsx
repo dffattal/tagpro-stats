@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link, browserHistory} from 'react-router'
+import axios from 'axios'
 import {getSearchResults} from '../reducers/accounts'
 
 /* global toastr */
@@ -21,12 +22,24 @@ class App extends Component {
 
   addAccount(evt) {
     evt.preventDefault()
-    console.log(evt.target.account.value)
     const urlCheck = evt.target.account.value.split('.')
     if (urlCheck.length < 3 || urlCheck[1].toLowerCase() !== 'koalabeast' || !urlCheck[2].toLowerCase().startsWith('com')) {
       toastr.warning('Please provide a valid TagPro account profile URL.<br /><br /> Example:<br />http://tagpro-radius.koalabeast.com/profile/52e582ca49164d6a2100044e')
     } else {
-      toastr.info('Success?')
+      axios.post('/api/accounts', {
+        url: evt.target.account.value
+      })
+        .then(createdAccount => {
+          if (createdAccount.status === 200) {
+            toastr.info('Account already exists in database.')
+          } else {
+            toastr.success('Account added to database!')
+          }
+          browserHistory.push(`/accounts/${createdAccount.data.id}`)
+        })
+        .catch(err => {
+          toastr.error(`Internal Server Error: ${err}`)
+        })
     }
   }
 

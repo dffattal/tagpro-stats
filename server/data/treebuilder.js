@@ -51,74 +51,73 @@ const treeTitles = [
   {name: 'Neutral', folder: 'rolling300', category: 'Rolling 300'}
 ]
 
-const getStatValue = (account, tree, folderName, titleName, statName) => {
+const getStatValue = (account, tree, folderName, titleName, fullStatName) => {
   let value
   if (tree.method) {
     const args = tree.args.map(arg => account[folderName][`${titleName} ${arg}`]) // pull data from account model if tree requires special method
     value = tree.method(...args)
   } else {
-    value = account[folderName][statName] // else pull data direct from account model
+    value = account[folderName][fullStatName] // else pull data direct from account model
   }
   return value
-}
-
-const initiateAccountDataObj = (accountData, id, name, timePeriod, titleName) => {
-  if (!accountData[id]) accountData[id] = {name, id} // initialize accountData obj if doesnt exist
-  if (!accountData[id][timePeriod]) accountData[id][timePeriod] = {} // initialize timePeriod obj if doesnt exist
-  if (!accountData[id][timePeriod][titleName]) accountData[id][timePeriod][titleName] = {}
-  return accountData
 }
 
 function buildTrees() {
   Account.findAll()
     .then(allAccounts => { // fetch all accounts from db
       const accountData = [] // initialize individual player stat json structures
+      const statData = {'All Time': {}, 'Rolling 300': {}}
 
       treeTitles.forEach((title, i) => {
         const folderName = title.folder // initialize folder name and model obj ('allTime' or 'rolling300')
         const timePeriod = title.category // initialize timePeriod ('All Time' or 'Rolling 300' )
-        const titleName = title.name
+        const titleName = title.name // initialize tab ('Daily', 'Weekly', etc.)
+        statData[timePeriod][titleName] = {}
 
-        treesToBuild.forEach(tree => {
-          const headAccount = allAccounts[0]
-          const statName = `${titleName} ${tree.name}`
+        const treeNamesToBuild = Object.keys(treesToBuild)
 
-          const headValue = getStatValue(headAccount, tree, folderName, titleName, statName)
-          const headName = headAccount.name
-          const headId = headAccount.id
-          const head = new StatBST(headValue, headName, headId)
+        treeNamesToBuild.forEach(tree => {
+          const statName = tree
+          const fullStatName = `${titleName} ${statName}`
 
-          initiateAccountDataObj(accountData, headId, headName, timePeriod, titleName)
-          accountData[headId][timePeriod][titleName][tree.name] = {value: headValue}
-
-          let currentIndex = 1
-          while (currentIndex < allAccounts.length) {
-            const currentAccount = allAccounts[currentIndex]
-            const currentValue = getStatValue(currentAccount, tree, folderName, titleName, statName)
-            const {name: currentName, id: currentId} = currentAccount
-            head.insert(currentValue, currentName, currentId)
-
-            initiateAccountDataObj(accountData, currentId, currentName, timePeriod, titleName)
-            accountData[currentId][timePeriod][titleName][tree.name] = {value: currentValue}
-            currentIndex++
-          }
-
-          let rank = 1
-          head.traverse(function(node) {
-            node.rank = rank++
-            accountData[node.id][timePeriod][titleName][tree.name].rank = node.rank
+          allAccounts.forEach(account => {
+            const value = getStatValue(account, tree, folderName, titleName, fullStatName)
+            const {name, id} = account
+            if (!accountData[id]) {
+              accountData[id] = {name, id}
+            }
+            if (!accountData[id][timePeriod]) {
+              accountData[id][timePeriod] = {}
+            }
+            if (!accountData[id][timePeriod][titleName]) {
+              accountData[id][timePeriod][titleName] = {}
+            }
+            accountData[id][timePeriod][titleName][statName] = {value}
+            if (!statData[timePeriod][titleName][statName]) {
+              statData[timePeriod][titleName][statName] = new StatBST(value, name, id)
+            } else {
+              statData[timePeriod][titleName][statName].insert(value, name, id)
+            }
           })
-
+          let rank = 1
+          statData[timePeriod][titleName][statName].traverse(function(node) {
+            node.rank = rank++
+            accountData[node.id][timePeriod][titleName][statName].rank = node.rank
+          })
           Data.findOrCreate({
             where: {
               category: timePeriod,
-              name: tree.name
+              name: statName
+            },
+            defaults: {
+              category: timePeriod,
+              name: statName
             }
           })
             .then(dataRow => {
               console.log('Attempting to write stat data table tree...')
               dataRow[0].update({
-                data: head
+                data: statData[timePeriod][titleName]
               })
             })
             .catch(console.error)

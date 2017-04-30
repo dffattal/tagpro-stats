@@ -14044,6 +14044,10 @@ var _reactRedux = __webpack_require__(37);
 
 var _reactRouter = __webpack_require__(38);
 
+var _axios = __webpack_require__(141);
+
+var _axios2 = _interopRequireDefault(_axios);
+
 var _accounts = __webpack_require__(50);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -14081,12 +14085,22 @@ var App = function (_Component) {
     key: 'addAccount',
     value: function addAccount(evt) {
       evt.preventDefault();
-      console.log(evt.target.account.value);
       var urlCheck = evt.target.account.value.split('.');
       if (urlCheck.length < 3 || urlCheck[1].toLowerCase() !== 'koalabeast' || !urlCheck[2].toLowerCase().startsWith('com')) {
         toastr.warning('Please provide a valid TagPro account profile URL.<br /><br /> Example:<br />http://tagpro-radius.koalabeast.com/profile/52e582ca49164d6a2100044e');
       } else {
-        toastr.info('Success?');
+        _axios2.default.post('/api/accounts', {
+          url: evt.target.account.value
+        }).then(function (createdAccount) {
+          if (createdAccount.status === 200) {
+            toastr.info('Account already exists in database.');
+          } else {
+            toastr.success('Account added to database!');
+          }
+          _reactRouter.browserHistory.push('/accounts/' + createdAccount.data.id);
+        }).catch(function (err) {
+          toastr.error('Internal Server Error: ' + err);
+        });
       }
     }
   }, {
@@ -14421,7 +14435,7 @@ var SingleAccount = function (_Component) {
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(
+        this.props.selectedAccount.id ? this.props.selectedAccount.data ? _react2.default.createElement(
           'div',
           { className: 'row' },
           _react2.default.createElement(
@@ -14575,6 +14589,14 @@ var SingleAccount = function (_Component) {
               )
             )
           )
+        ) : _react2.default.createElement(
+          'h2',
+          null,
+          'Account is being built, check back soon!'
+        ) : _react2.default.createElement(
+          'h2',
+          null,
+          'Account not found.'
         )
       );
     }

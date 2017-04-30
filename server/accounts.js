@@ -22,13 +22,17 @@ router.get('/', function(req, res, next) {
 })
 
 router.post('/', function(req, res, next) {
+  const urlCheck = req.body.url && req.body.url.split('/')
+  const profileId = urlCheck[urlCheck.length - 1]
   Account.findOne({
     where: {
-      url: req.body.url
+      url: {
+        $iLike: `%${profileId}%`
+      }
     }
   })
     .then(foundAccount => {
-      if (foundAccount) return res.status(200).json(foundAccount)
+      if (foundAccount) return res.status(200).send(foundAccount)
       else return axios.get(req.body.url)
     })
     .then(response => response.data)

@@ -51,7 +51,9 @@ class SingleAccount extends Component {
     }]
     return (
       <div>
-        <div className="row">
+        {this.props.selectedAccount.id
+        ? this.props.selectedAccount.data
+        ? <div className="row">
           <h1 className="text-center"><a href={url}>{name}</a></h1>
           <div className="col-lg-12">
             {tables.map((table, i) => {
@@ -118,6 +120,8 @@ class SingleAccount extends Component {
                 </table>
               </div>
         </div>
+        : <h2>Account is being built, check back soon!</h2>
+        : <h2>Account not found.</h2>}
       </div>
     )
   }

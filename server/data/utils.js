@@ -88,192 +88,166 @@ const flairTreesToBuild = [
   'Pi',
 ]
 
-const treesToBuild = [
-  {
-    name: 'Win Percent',
+const treesToBuild = {
+  'Win Percent': {
     method: winRatio,
     args: ['Wins', 'Games', 'Saves', 'Save Percent']
   },
-  {
-    name: 'Points'
+  'Points': {
+    method: false
   },
-  {
-    name: 'Points Per Game',
+  'Points Per Game': {
     method: simpleRatio,
     args: ['Points', 'Games']
   },
-  {
-    name: 'Games'
+  'Games': {
+    method: false
   },
-  {
-    name: 'Games Per Hour',
+  'Games Per Hour': {
     method: timeRatio,
     args: ['Games', 'Time Played']
   },
-  {
-    name: 'Wins'
+  'Wins': {
+    method: false
   },
-  {
-    name: 'Ties'
+  'Ties': {
+    method: false
   },
-  {
-    name: 'Losses'
+  'Losses': {
+    method: false
   },
-  {
-    name: 'Saves'
+  'Saves': {
+    method: false
   },
-  {
-    name: 'Save Percent'
+  'Save Percent': {
+    method: false
   },
-  {
-    name: 'Tags'
+  'Tags': {
+    method: false
   },
-  {
-    name: 'Tags Per Game',
+  'Tags Per Game': {
     method: simpleRatio,
     args: ['Tags', 'Games']
   },
-  {
-    name: 'Tags Per Hour',
+  'Tags Per Hour': {
     method: timeRatio,
     args: ['Tags', 'Time Played']
   },
-  {
-    name: 'Popped'
+  'Popped': {
+    method: false
   },
-  {
-    name: 'Popped Per Game',
+  'Popped Per Game': {
     method: simpleRatio,
     args: ['Popped', 'Games']
   },
-  {
-    name: 'Popped Per Hour',
+  'Popped Per Hour': {
     method: timeRatio,
     args: ['Popped', 'Time Played']
   },
-  {
-    name: 'Tags Per Pop',
+  'Tags Per Pop': {
     method: simpleRatio,
     args: ['Tags', 'Popped']
   },
-  {
-    name: 'Grabs'
+  'Grabs': {
+    method: false
   },
-  {
-    name: 'Grabs Per Game',
+  'Grabs Per Game': {
     method: simpleRatio,
     args: ['Grabs', 'Popped']
   },
-  {
-    name: 'Grabs Per Hour',
+  'Grabs Per Hour': {
     method: timeRatio,
     args: ['Grabs', 'Time Played']
   },
-  {
-    name: 'Captures'
+  'Captures': {
+    method: false
   },
-  {
-    name: 'Captures Per Game',
+  'Captures Per Game': {
     method: simpleRatio,
     args: ['Captures', 'Games']
   },
-  {
-    name: 'Captures Per Hour',
+  'Captures Per Hour': {
     method: timeRatio,
     args: ['Captures', 'Time Played']
   },
-  {
-    name: 'Captures Per Grab',
+  'Captures Per Grab': {
     method: simpleRatio,
     args: ['Captures', 'Grabs']
   },
-  {
-    name: 'Hold'
+  'Hold': {
+    method: false
   },
-  {
-    name: 'Hold Per Game',
+  'Hold Per Game': {
     method: simpleRatio,
     args: ['Hold', 'Games']
   },
-  {
-    name: 'Hold Per Grab',
+  'Hold Per Grab': {
     method: simpleRatio,
     args: ['Hold', 'Grabs']
   },
-  {
-    name: 'Hold Per Hour',
+  'Hold Per Hour': {
     method: timeRatio,
     args: ['Hold', 'Time Played']
   },
-  {
-    name: 'Hold Per Cap',
+  'Hold Per Cap': {
     method: simpleRatio,
     args: ['Hold', 'Captures']
   },
-  {
-    name: 'Prevent'
+  'Prevent': {
+    method: false
   },
-  {
-    name: 'Prevent Per Game',
+  'Prevent Per Game': {
     method: simpleRatio,
     args: ['Prevent', 'Games']
   },
-  {
-    name: 'Prevent Per Hour',
+  'Prevent Per Hour': {
     method: timeRatio,
     args: ['Prevent', 'Time Played']
   },
-  {
-    name: 'Returns'
+  'Returns': {
+    method: false
   },
-  {
-    name: 'Returns Per Game',
+  'Returns Per Game': {
     method: simpleRatio,
     args: ['Returns', 'Games']
   },
-  {
-    name: 'Returns Per Hour',
+  'Returns Per Hour': {
     method: timeRatio,
     args: ['Returns', 'Time Played']
   },
-  {
-    name: 'Support'
+  'Support': {
+    method: false
   },
-  {
-    name: 'Support Per Game',
+  'Support Per Game': {
     method: simpleRatio,
     args: ['Support', 'Games']
   },
-  {
-    name: 'Support Per Hour',
+  'Support Per Hour': {
     method: timeRatio,
     args: ['Support', 'Time Played']
   },
-  {
-    name: 'Non-Return Tags',
+  'Non-Return Tags': {
     method: nonReturnTags,
     args: ['Tags', 'Returns']
   },
-  {
-    name: 'Prevent Per Return',
+  'Prevent Per Return': {
     method: simpleRatio,
     args: ['Prevent', 'Returns']
   },
-  {
-    name: 'Power-up Percent'
+  'Power-up Percent': {
+    method: false
   },
-  {
-    name: 'Time Played'
+  'Time Played': {
+    method: false
   },
-  {
-    name: 'Disconnects'
+  'Disconnects': {
+    method: false
   },
-  {
-    name: 'Disconnects Per Game',
+  'Disconnects Per Game': {
     method: simpleRatio,
     args: ['Disconnects', 'Games']
   }
-]
+}
 
 module.exports = {
   treesToBuild,
