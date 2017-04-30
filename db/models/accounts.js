@@ -60,5 +60,10 @@ module.exports = db => db.define('accounts', {
         })
       }
     }
+  },
+  instanceMethods: {
+    getWeeklyStats: function() {
+      if (this.data) return Object.assign({}, this.data['All Time']['Weekly'])
+    }
   }
 })
