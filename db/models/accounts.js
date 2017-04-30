@@ -2,7 +2,11 @@ const Sequelize = require('sequelize')
 
 module.exports = db => db.define('accounts', {
   name: {
-    type: Sequelize.STRING
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   },
   previousNames: {
     type: Sequelize.ARRAY(Sequelize.STRING),
@@ -37,6 +41,10 @@ module.exports = db => db.define('accounts', {
   },
   data: {
     type: Sequelize.JSON
+  },
+  selectedFlair: {
+    type: Sequelize.STRING,
+    allowNull: false
   }
 }, {
   hooks: {

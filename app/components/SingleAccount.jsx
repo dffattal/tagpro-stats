@@ -13,6 +13,12 @@ class SingleAccount extends Component {
     this.changeTab = this.changeTab.bind(this)
   }
 
+  flairImage(flair) {
+    if (flair.indexOf('?') !== -1) return `/flairs/${flair.split('?')[0]}.png`
+    else if (flair === 'Total') return `/flairs/${this.props.selectedAccount.selectedFlair}.png`
+    else return `/flairs/${flair}.png`
+  }
+
   cleanStats(stat, value) {
     if (timeStats.indexOf(stat) !== -1) return convertTime(value)
     if (percentStats.indexOf(stat) !== -1) return convertPercents(value, stat)
@@ -31,13 +37,8 @@ class SingleAccount extends Component {
   }
 
   render() {
-    const {allTime, degrees, flairs, name, previousNames, rolling300} = this.props.selectedAccount
-    const allTimeStats = allTime && Object.keys(allTime)
-    const rolling300Stats = rolling300 && Object.keys(rolling300)
-    const data = this.props.selectedAccountData
-
-    allTime && calcWinPercent(allTime, allTimeStats)
-    rolling300 && calcWinPercent(rolling300, rolling300Stats)
+    const {degrees, name, previousNames, data, selectedFlair, url} = this.props.selectedAccount
+    const flairNames = data && Object.keys(data.flairs)
 
     const tables = [{
       name: 'All Time',
@@ -51,7 +52,7 @@ class SingleAccount extends Component {
     return (
       <div>
         <div className="row">
-          <h1 className="text-center">{name}</h1>
+          <h1 className="text-center"><a href={url}>{name}</a></h1>
           <div className="col-lg-12">
             {tables.map((table, i) => {
               return (
@@ -76,7 +77,7 @@ class SingleAccount extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {data[table.name] && Object.keys(data[table.name][table.state]).map(stat => {
+                      {data && Object.keys(data[table.name][table.state]).map(stat => {
                         const statObj = data[table.name][table.state][stat]
                         return (
                           <tr key={stat}>
@@ -103,25 +104,16 @@ class SingleAccount extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {flairs && flairs.map(flair => {
+                    {data && flairNames.map(flair => {
                       return (
-                        <tr key={flair.flairName}>
-                          <th>{flair.flairName}</th>
-                          <td><img src={
-                            flair.flairName.indexOf('?') === -1
-                            ? `/flairs/${flair.flairName}.png`
-                            : `/flairs/${flair.flairName.split('?')[0]}.png` }/></td>
-                          <td>{flair.flairCount || 'N/A'}</td>
-                          <td>TBD</td>
+                        <tr key={flair}>
+                          <th>{flair}</th>
+                          <td><img src={this.flairImage(flair)}/></td>
+                          <td>{data.flairs[flair].value || 'N/A'}</td>
+                          <td>{data.flairs[flair].rank}</td>
                         </tr>
                       )
                     })}
-                    <tr>
-                      <th>Total</th>
-                      <td></td>
-                      <td>{flairs && flairs.length}</td>
-                      <td>TBD</td>
-                    </tr>
                   </tbody>
                 </table>
               </div>

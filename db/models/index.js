@@ -14,7 +14,8 @@ const app = require('APP')
     // about.
     , metaModels = {
       // ---------- Add new models here ----------
-      Accounts: require('./accounts')
+      Accounts: require('./accounts'),
+      Data: require('./data')
     }
     , {mapValues} = require('lodash')
 

@@ -19,6 +19,13 @@ class App extends Component {
 
   addAccount(evt) {
     evt.preventDefault()
+    console.log(evt.target.account.value)
+    const urlCheck = evt.target.account.value.split('.')
+    if (urlCheck[1].toLowerCase() === 'koalabeast' && urlCheck[2].toLowerCase().startsWith('com')) {
+      console.log('Clean url!')
+    } else {
+      console.log('Bad url!')
+    }
   }
 
   render() {
@@ -48,7 +55,7 @@ class App extends Component {
             </div>
           </nav>
           <div className="col-lg-12">
-            {this.props.children}
+            {this.props.children ? this.props.children : <h1 className="text-center logo">TagPro-Stats</h1>}
           </div>
       </div>
     )

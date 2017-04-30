@@ -14078,6 +14078,13 @@ var App = function (_Component) {
     key: 'addAccount',
     value: function addAccount(evt) {
       evt.preventDefault();
+      console.log(evt.target.account.value);
+      var urlCheck = evt.target.account.value.split('.');
+      if (urlCheck[1].toLowerCase() === 'koalabeast' && urlCheck[2].toLowerCase().startsWith('com')) {
+        console.log('Clean url!');
+      } else {
+        console.log('Bad url!');
+      }
     }
   }, {
     key: 'render',
@@ -14145,7 +14152,11 @@ var App = function (_Component) {
         _react2.default.createElement(
           'div',
           { className: 'col-lg-12' },
-          this.props.children
+          this.props.children ? this.props.children : _react2.default.createElement(
+            'h1',
+            { className: 'text-center logo' },
+            'TagPro-Stats'
+          )
         )
       );
     }
@@ -14359,6 +14370,11 @@ var SingleAccount = function (_Component) {
   }
 
   _createClass(SingleAccount, [{
+    key: 'flairImage',
+    value: function flairImage(flair) {
+      if (flair.indexOf('?') !== -1) return '/flairs/' + flair.split('?')[0] + '.png';else if (flair === 'Total') return '/flairs/' + this.props.selectedAccount.selectedFlair + '.png';else return '/flairs/' + flair + '.png';
+    }
+  }, {
     key: 'cleanStats',
     value: function cleanStats(stat, value) {
       if (_utils.timeStats.indexOf(stat) !== -1) return (0, _utils.convertTime)(value);
@@ -14381,19 +14397,14 @@ var SingleAccount = function (_Component) {
       var _this2 = this;
 
       var _props$selectedAccoun = this.props.selectedAccount,
-          allTime = _props$selectedAccoun.allTime,
           degrees = _props$selectedAccoun.degrees,
-          flairs = _props$selectedAccoun.flairs,
           name = _props$selectedAccoun.name,
           previousNames = _props$selectedAccoun.previousNames,
-          rolling300 = _props$selectedAccoun.rolling300;
+          data = _props$selectedAccoun.data,
+          selectedFlair = _props$selectedAccoun.selectedFlair,
+          url = _props$selectedAccoun.url;
 
-      var allTimeStats = allTime && Object.keys(allTime);
-      var rolling300Stats = rolling300 && Object.keys(rolling300);
-      var data = this.props.selectedAccountData;
-
-      allTime && (0, _utils.calcWinPercent)(allTime, allTimeStats);
-      rolling300 && (0, _utils.calcWinPercent)(rolling300, rolling300Stats);
+      var flairNames = data && Object.keys(data.flairs);
 
       var tables = [{
         name: 'All Time',
@@ -14413,7 +14424,11 @@ var SingleAccount = function (_Component) {
           _react2.default.createElement(
             'h1',
             { className: 'text-center' },
-            name
+            _react2.default.createElement(
+              'a',
+              { href: url },
+              name
+            )
           ),
           _react2.default.createElement(
             'div',
@@ -14464,7 +14479,7 @@ var SingleAccount = function (_Component) {
                   _react2.default.createElement(
                     'tbody',
                     null,
-                    data[table.name] && Object.keys(data[table.name][table.state]).map(function (stat) {
+                    data && Object.keys(data[table.name][table.state]).map(function (stat) {
                       var statObj = data[table.name][table.state][stat];
                       return _react2.default.createElement(
                         'tr',
@@ -14528,52 +14543,32 @@ var SingleAccount = function (_Component) {
               _react2.default.createElement(
                 'tbody',
                 null,
-                flairs && flairs.map(function (flair) {
+                data && flairNames.map(function (flair) {
                   return _react2.default.createElement(
                     'tr',
-                    { key: flair.flairName },
+                    { key: flair },
                     _react2.default.createElement(
                       'th',
                       null,
-                      flair.flairName
+                      flair
                     ),
                     _react2.default.createElement(
                       'td',
                       null,
-                      _react2.default.createElement('img', { src: flair.flairName.indexOf('?') === -1 ? '/flairs/' + flair.flairName + '.png' : '/flairs/' + flair.flairName.split('?')[0] + '.png' })
+                      _react2.default.createElement('img', { src: _this2.flairImage(flair) })
                     ),
                     _react2.default.createElement(
                       'td',
                       null,
-                      flair.flairCount || 'N/A'
+                      data.flairs[flair].value || 'N/A'
                     ),
                     _react2.default.createElement(
                       'td',
                       null,
-                      'TBD'
+                      data.flairs[flair].rank
                     )
                   );
-                }),
-                _react2.default.createElement(
-                  'tr',
-                  null,
-                  _react2.default.createElement(
-                    'th',
-                    null,
-                    'Total'
-                  ),
-                  _react2.default.createElement('td', null),
-                  _react2.default.createElement(
-                    'td',
-                    null,
-                    flairs && flairs.length
-                  ),
-                  _react2.default.createElement(
-                    'td',
-                    null,
-                    'TBD'
-                  )
-                )
+                })
               )
             )
           )

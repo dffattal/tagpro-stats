@@ -1,14 +1,7 @@
 const Account = require('APP/db').Accounts
+const Data = require('APP/db').Data
 const treesToBuild = require('./utils').treesToBuild
-const path = require('path')
-const S3FS = require('s3fs')
-const s3fs = new S3FS(
-  'tagpro-stats',
-  {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-  }
-)
+const flairTreesToBuild = require('./utils').flairTreesToBuild
 
 function StatBST(val, name, id) {
   this.value = val
@@ -55,8 +48,8 @@ const treeTitles = [
   {name: 'All', folder: 'allTime', category: 'All Time'},
   {name: 'All', folder: 'rolling300', category: 'Rolling 300'},
   {name: 'CTF', folder: 'rolling300', category: 'Rolling 300'},
-  {name: 'Neutral', folder: 'rolling300', category: 'Rolling 300'},
-  {name: 'Flairs', folder: 'flairs', category: 'Flairs'}]
+  {name: 'Neutral', folder: 'rolling300', category: 'Rolling 300'}
+]
 
 const getStatValue = (account, tree, folderName, titleName, statName) => {
   let value
@@ -116,15 +109,69 @@ function buildTrees() {
             accountData[node.id][timePeriod][titleName][tree.name].rank = node.rank
           })
 
-          // console.log('Attempting to write full-stat tree...')
-          // s3fs.writeFile(`/data/${folderName}/${titleName}/${tree.name}.json`, JSON.stringify(head), function(err) {
-          //   if (err) console.error(err)
-          // })
+          Data.findOrCreate({
+            where: {
+              category: timePeriod,
+              name: tree.name
+            }
+          })
+            .then(dataRow => {
+              console.log('Attempting to write stat data table tree...')
+              dataRow[0].update({
+                data: head
+              })
+            })
+            .catch(console.error)
         })
       })
+
+      const flairData = {}
+
+      allAccounts.forEach(account => {
+        accountData[account.id].flairs = {}
+        account.flairs.forEach(flair => {
+          if (!flairData[flair.flairName]) {
+            flairData[flair.flairName] = new StatBST(flair.flairCount, account.name, account.id)
+          } else {
+            flairData[flair.flairName].insert(flair.flairCount, account.name, account.id)
+          }
+          accountData[account.id].flairs[flair.flairName] = {value: flair.flairCount}
+        })
+        const totalFlairs = account.flairs.length
+        if (!flairData['Total']) {
+          flairData['Total'] = new StatBST(totalFlairs, account.name, account.id)
+        } else {
+          flairData['Total'].insert(totalFlairs, account.name, account.id)
+        }
+        accountData[account.id].flairs['Total'] = {value: account.flairs.length}
+      })
+
+      const flairTrees = Object.keys(flairData)
+      flairTrees.forEach(flair => {
+        let rank = 1
+        flairData[flair].traverse(function(node) {
+          node.rank = rank++
+          accountData[node.id].flairs[flair].rank = node.rank
+        })
+        Data.findOrCreate({
+          where: {
+            category: 'Flairs',
+            name: flair
+          }
+        })
+          .then(dataRow => {
+            console.log('Attempting to write flair data table tree...')
+            dataRow[0].update({
+              data: flairData[flair]
+            })
+          })
+          .catch(console.error)
+      })
+
       accountData.forEach(accountDataObj => {
         Account.findById(accountDataObj.id)
           .then(accountToUpdate => {
+            console.log('Attempting to write player stat tree...')
             accountToUpdate.update({
               data: accountDataObj
             })
@@ -132,7 +179,7 @@ function buildTrees() {
           .catch(console.error)
       })
     })
-  console.log('Exiting function!')
+    .catch(console.error)
 }
 
 buildTrees()

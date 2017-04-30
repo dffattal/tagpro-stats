@@ -1,6 +1,4 @@
 // removes white space and new lines that come from tagpro profile page html
-const clearAllWhiteSpace = elem => elem.replace(/\s/g, '')
-
 const clearOuterWhiteSpace = elem => {
   const elemText = elem.match(/\S/g)
   const startIndex = elem.indexOf(elemText[0])
@@ -80,4 +78,4 @@ const transformData = (dataArr, period) => {
   return dataArrToObj(dataArr, period)
 }
 
-module.exports = {transformData, clearAllWhiteSpace, clearOuterWhiteSpace}
+module.exports = {transformData, clearOuterWhiteSpace}

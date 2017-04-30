@@ -3,7 +3,6 @@ const axios = require('axios')
 const cheerio = require('cheerio')
 const Account = require('APP/db').Accounts
 const transformData = require('./utils').transformData
-const clearAllWhiteSpace = require('./utils').clearAllWhiteSpace
 const clearOuterWhiteSpace = require('./utils').clearOuterWhiteSpace
 
 const weeklyTimelineUpdateRule = new schedule.RecurrenceRule()
@@ -43,7 +42,8 @@ const hourlyStatsUpdate = schedule.scheduleJob(hourlyStatsUpdateRule, function()
               rolling300: newStats[1],
               flairs: newStats[2],
               name: newStats[3],
-              degrees: newStats[4]
+              degrees: newStats[4],
+              selectedFlair: newStats[5]
             })
           })
         }, 3600000 / allAccounts.length * i)
@@ -63,7 +63,8 @@ const fetchLeaderboardsAccounts = schedule.scheduleJob(fetchLeaderboardsAccounts
 
 function fetchStats(data) {
   const $ = cheerio.load(data)
-  return [fetchAllTime($), fetchRolling300($), fetchFlairs($), fetchName($), fetchDegrees($)]
+  const flairs = fetchFlairs($)
+  return [fetchAllTime($), fetchRolling300($), flairs[0], fetchName($), fetchDegrees($), flairs[1]]
 }
 
 function fetchAllTime($) {
@@ -89,7 +90,7 @@ function fetchName($) {
 }
 
 function fetchDegrees($) {
-  return clearAllWhiteSpace($('.profile-detail').find('td')[5].children[0].data.slice(0, -1))
+  return clearOuterWhiteSpace($('.profile-detail').find('td')[5].children[0].data.slice(0, -1))
 }
 
 function fetchFlairs($) {
@@ -99,11 +100,14 @@ function fetchFlairs($) {
     if (flairName !== 'Remove Flair') dataArr.push({flairName})
   })
   $('#owned-flair').find('.flair-footer').each(function(index, elem) {
-    let flairCount = clearAllWhiteSpace(elem.firstChild.next.firstChild.data)
+    let flairCount = clearOuterWhiteSpace(elem.firstChild.next.firstChild.data)
     flairCount = +flairCount.split(':')[1] || 0
     if (index !== dataArr.length) dataArr[index].flairCount = flairCount
   })
-  return dataArr
+  let selectedFlair = 'No Flair'
+  const selectedFlairElem = $('.selected').find('.flair-header')
+  if (selectedFlairElem) selectedFlair = clearOuterWhiteSpace(selectedFlairElem[0].children[0].data)
+  return [dataArr, selectedFlair]
 }
 
 function fetchLeaderboards($) {
@@ -111,7 +115,7 @@ function fetchLeaderboards($) {
   $('#daily').find('a').each(function(index, elem) {
     accountArr.push({
       name: clearOuterWhiteSpace(elem.lastChild.data),
-      url: `http://tagpro-radius.koalabeast.com${elem.attribs.href}`
+      url: `http://tagpro-pi.koalabeast.com${elem.attribs.href}`
     })
   })
   accountArr.forEach(account => Account.findOrCreate({

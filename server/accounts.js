@@ -1,8 +1,6 @@
 const router = require('express').Router()
 const axios = require('axios')
 const cheerio = require('cheerio')
-const jsonfile = require('jsonfile')
-const path = require('path')
 const Account = require('APP/db').Accounts
 const fetchStats = require('./schedule')
 
@@ -43,7 +41,8 @@ router.post('/', function(req, res, next) {
         flairs: stats[2],
         name: stats[3],
         previousNames: [stats[3]],
-        degrees: stats[4]
+        degrees: stats[4],
+        selectedFlair: stats[5]
       })
     })
     .then(createdAccount => res.status(201).json(createdAccount))
