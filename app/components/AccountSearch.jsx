@@ -30,7 +30,7 @@ class AccountSearch extends Component {
       <div className="col-lg-6 col-lg-offset-1 pull-left">
         <h3>{results.length} Account{results.length === 1 ? '' : 's'} Found</h3>
         <ul className="list-group">
-          {this.props.searchResults.map((account, i) => {
+          {results.map((account, i) => {
             if (i >= this.state.lowerBound && i < this.state.upperBound) {
               return (
                 <li key={account.id} className="list-group-item">

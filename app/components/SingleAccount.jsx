@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {timeStats, percentStats, convertTime, convertPercents, convertRatios, calcWinPercent} from './utils'
+import {timeStats, percentStats, convertTime, convertPercents, convertRatios} from './utils'
 
 class SingleAccount extends Component {
   constructor(props) {

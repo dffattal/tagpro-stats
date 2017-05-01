@@ -117,7 +117,7 @@ function buildTrees() {
             .then(dataRow => {
               console.log('Attempting to write stat data table tree...')
               dataRow[0].update({
-                data: statData[timePeriod][titleName]
+                data: statData[timePeriod][titleName][statName]
               })
             })
             .catch(console.error)
@@ -181,4 +181,6 @@ function buildTrees() {
     .catch(console.error)
 }
 
-buildTrees()
+module.exports = {
+  buildTrees
+}

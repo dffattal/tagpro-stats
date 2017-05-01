@@ -1,6 +1,5 @@
 const router = require('express').Router()
 const axios = require('axios')
-const cheerio = require('cheerio')
 const Account = require('APP/db').Accounts
 const fetchStats = require('./schedule')
 
@@ -71,7 +70,5 @@ router.put('/:id', function(req, res, next) {
     })
     .catch(next)
 })
-
-
 
 module.exports = router

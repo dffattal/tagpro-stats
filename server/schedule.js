@@ -4,6 +4,7 @@ const cheerio = require('cheerio')
 const Account = require('APP/db').Accounts
 const transformData = require('./utils').transformData
 const clearOuterWhiteSpace = require('./utils').clearOuterWhiteSpace
+const buildTrees = require('./data/treebuilder').buildTrees
 
 // const weeklyTimelineUpdateRule = new schedule.RecurrenceRule()
 // weeklyTimelineUpdateRule.minute = 55
@@ -49,6 +50,7 @@ const hourlyStatsUpdate = schedule.scheduleJob(hourlyStatsUpdateRule, function()
         }, 3600000 / allAccounts.length * i)
       }
     })
+  buildTrees()
 })
 
 const fetchLeaderboardsAccounts = schedule.scheduleJob(fetchLeaderboardsAccountsRule, function() {

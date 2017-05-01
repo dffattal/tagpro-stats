@@ -27,12 +27,14 @@ class App extends Component {
   searchAccounts(evt) {
     evt.preventDefault()
     this.props.getSearchResults(evt.target.search.value)
-    browserHistory.push('/results')
+    browserHistory.push('/accounts/results')
   }
 
   searchStats(evt) {
     evt.preventDefault()
+    const query = (this.state.category === 'Flairs' ? `flair=${this.state.flair}` : `stat=${this.state.stat}`)
     this.props.getSingleTree(this.state)
+    browserHistory.push(`/stats/results?category=${this.state.category}&${query}`)
   }
 
   addAccount(evt) {
@@ -77,8 +79,7 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state)
-    const stats = (this.state.category === 'Flairs' ? flairTreesToBuild : Object.keys(treesToBuild))
+    const stats = (this.state.category === 'Flairs' ? flairTreesToBuild.concat(['Total']) : Object.keys(treesToBuild))
     return (
       <div>
         <nav className="navbar navbar-default">
@@ -93,7 +94,7 @@ class App extends Component {
                       <option value="Rolling 300">Rolling 300</option>
                       <option value="Flairs">Flairs</option>
                     </select>
-                    <select className="form-control" value={this.state.stat} onChange={this.changeStat}>
+                    <select className="form-control" value={this.state.category === 'Flairs' ? this.state.flair : this.state.stat} onChange={this.changeStat}>
                       {stats.map(stat => {
                         return (
                           <option value={stat} key={stat}>{stat}</option>
