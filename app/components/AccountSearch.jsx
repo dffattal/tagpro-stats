@@ -40,12 +40,16 @@ class AccountSearch extends Component {
             }
           })}
         </ul>
-        <btn
-        className={`btn btn-info pull-left ${this.state.lowerBound === 0 ? 'disabled' : ''}`}
+        {this.state.lowerBound !== 0
+        ? <btn
+        className="btn btn-info pull-left"
         onClick={this.decreaseBounds}>Prev</btn>
-        <btn
-        className={`btn btn-info pull-right ${this.state.upperBound >= results.length ? 'disabled' : ''}`}
+        : null}
+        {this.state.upperBound <= results.length
+        ? <btn
+        className="btn btn-info pull-right"
         onClick={this.increaseBounds}>Next</btn>
+        : null}
       </div>
     )
   }

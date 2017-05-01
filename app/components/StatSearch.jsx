@@ -10,6 +10,8 @@ class StatSearch extends Component {
       lowerBound: 0,
       upperBound: 100
     }
+    this.decreaseBounds = this.decreaseBounds.bind(this)
+    this.increaseBounds = this.increaseBounds.bind(this)
   }
   flairImage(flair) {
     if (flair.indexOf('?') !== -1) return `/flairs/${flair.split('?')[0]}.png`
@@ -21,6 +23,18 @@ class StatSearch extends Component {
     if (percentStats.indexOf(stat) !== -1) return convertPercents(value, stat)
     if (stat.indexOf('Per ') !== -1) return convertRatios(value)
     else return value
+  }
+  decreaseBounds() {
+    this.setState({
+      lowerBound: this.state.lowerBound -= 100,
+      upperBound: this.state.upperBound -= 100
+    })
+  }
+  increaseBounds() {
+    this.setState({
+      lowerBound: this.state.lowerBound += 100,
+      upperBound: this.state.upperBound += 100
+    })
   }
   render() {
     const tree = this.props.selectedTree
@@ -66,6 +80,16 @@ class StatSearch extends Component {
             })}
             </tbody>
           </table>
+          {this.state.lowerBound !== 0
+          ? <btn
+          className="btn btn-info pull-left"
+          onClick={this.decreaseBounds}>Prev</btn>
+          : null}
+          {this.state.upperBound <= sortedResults.length
+          ? <btn
+          className="btn btn-info pull-right"
+          onClick={this.increaseBounds}>Next</btn>
+          : null}
         </div>
         : <div />
         }

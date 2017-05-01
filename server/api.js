@@ -1,6 +1,7 @@
 'use strict'
 const axios = require('axios')
 const cheerio = require('cheerio')
+const buildTrees = require('./data/treebuilder').buildTrees
 
 const api = module.exports = require('express').Router()
 
@@ -18,11 +19,17 @@ api
         .then(data => {
           const $ = cheerio.load(data)
           const url = $('h3')[0].children[1].attribs.href
-          console.log('Attempting to add account to database...')
-          return axios.post('https://tagpro-stats.herokuapp.com/api/accounts/', {url})
+          setTimeout(function() {
+            console.log('Attempting to add account to database...')
+            return axios.post('https://tagpro-stats.herokuapp.com/api/accounts/', {url})
+          }, i*10)
         })
         .catch(console.error)
     }
+    res.sendStatus(204)
+  })
+  .get('/build', function(req, res, next) {
+    buildTrees()
     res.sendStatus(204)
   })
 

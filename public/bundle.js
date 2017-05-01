@@ -14214,20 +14214,20 @@ var AccountSearch = function (_Component) {
             }
           })
         ),
-        _react2.default.createElement(
+        this.state.lowerBound !== 0 ? _react2.default.createElement(
           'btn',
           {
-            className: 'btn btn-info pull-left ' + (this.state.lowerBound === 0 ? 'disabled' : ''),
+            className: 'btn btn-info pull-left',
             onClick: this.decreaseBounds },
           'Prev'
-        ),
-        _react2.default.createElement(
+        ) : null,
+        this.state.upperBound <= results.length ? _react2.default.createElement(
           'btn',
           {
-            className: 'btn btn-info pull-right ' + (this.state.upperBound >= results.length ? 'disabled' : ''),
+            className: 'btn btn-info pull-right',
             onClick: this.increaseBounds },
           'Next'
-        )
+        ) : null
       );
     }
   }]);
@@ -14889,6 +14889,8 @@ var StatSearch = function (_Component) {
       lowerBound: 0,
       upperBound: 100
     };
+    _this.decreaseBounds = _this.decreaseBounds.bind(_this);
+    _this.increaseBounds = _this.increaseBounds.bind(_this);
     return _this;
   }
 
@@ -14903,6 +14905,22 @@ var StatSearch = function (_Component) {
       if (_utils.timeStats.indexOf(stat) !== -1) return (0, _utils.convertTime)(value);
       if (_utils.percentStats.indexOf(stat) !== -1) return (0, _utils.convertPercents)(value, stat);
       if (stat.indexOf('Per ') !== -1) return (0, _utils.convertRatios)(value);else return value;
+    }
+  }, {
+    key: 'decreaseBounds',
+    value: function decreaseBounds() {
+      this.setState({
+        lowerBound: this.state.lowerBound -= 100,
+        upperBound: this.state.upperBound -= 100
+      });
+    }
+  }, {
+    key: 'increaseBounds',
+    value: function increaseBounds() {
+      this.setState({
+        lowerBound: this.state.lowerBound += 100,
+        upperBound: this.state.upperBound += 100
+      });
     }
   }, {
     key: 'render',
@@ -14998,7 +15016,21 @@ var StatSearch = function (_Component) {
                 }
               })
             )
-          )
+          ),
+          this.state.lowerBound !== 0 ? _react2.default.createElement(
+            'btn',
+            {
+              className: 'btn btn-info pull-left',
+              onClick: this.decreaseBounds },
+            'Prev'
+          ) : null,
+          this.state.upperBound <= sortedResults.length ? _react2.default.createElement(
+            'btn',
+            {
+              className: 'btn btn-info pull-right',
+              onClick: this.increaseBounds },
+            'Next'
+          ) : null
         ) : _react2.default.createElement('div', null)
       );
     }
